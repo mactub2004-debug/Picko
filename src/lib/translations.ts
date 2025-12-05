@@ -318,6 +318,125 @@ export const translations = {
                 help: 'Ayuda y FAQ',
                 helpDesc: 'Obtén ayuda y soporte'
             }
+        },
+        // MULTI-VERTICAL: Selector de tipo de producto
+        productType: {
+            selector: {
+                title: '¿Qué estás escaneando?',
+                food: 'Alimento',
+                cosmetic: 'Cosmético',
+                foodDesc: 'Alimentos y bebidas',
+                cosmeticDesc: 'Cuidado de piel y belleza'
+            },
+            labels: {
+                food: 'Producto Alimenticio',
+                cosmetic: 'Producto Cosmético'
+            }
+        },
+        // MULTI-VERTICAL: Perfil de Piel
+        skinProfile: {
+            title: 'Perfil de Piel',
+            subtitle: 'Ayúdanos a recomendar mejores productos de skincare',
+            skinType: {
+                title: '¿Cuál es tu tipo de piel?',
+                types: {
+                    Dry: 'Seca',
+                    Oily: 'Grasa',
+                    Combination: 'Mixta',
+                    Normal: 'Normal',
+                    Sensitive: 'Sensible'
+                },
+                descriptions: {
+                    Dry: 'Se siente tirante, puede tener zonas escamosas',
+                    Oily: 'Brillante, poros dilatados, propensa a brotes',
+                    Combination: 'Zona T grasa, mejillas secas',
+                    Normal: 'Equilibrada, pocas imperfecciones',
+                    Sensitive: 'Se irrita fácilmente, propensa a rojeces'
+                }
+            },
+            concerns: {
+                title: 'Selecciona tus preocupaciones de piel',
+                subtitle: 'Elige todas las que apliquen',
+                options: {
+                    Acne: 'Acné',
+                    Rosacea: 'Rosácea',
+                    Aging: 'Envejecimiento/Arrugas',
+                    Hyperpigmentation: 'Manchas oscuras',
+                    Dryness: 'Sequedad',
+                    Oiliness: 'Exceso de grasa',
+                    LargePores: 'Poros grandes',
+                    Blackheads: 'Puntos negros',
+                    Sensitivity: 'Sensibilidad',
+                    Dermatitis: 'Dermatitis/Eczema'
+                }
+            },
+            avoid: {
+                title: 'Ingredientes a evitar',
+                subtitle: 'Selecciona ingredientes que quieras evitar',
+                options: {
+                    Fragrance: 'Fragancia/Perfume',
+                    Parabens: 'Parabenos',
+                    Alcohol: 'Alcoholes secantes',
+                    Sulfates: 'Sulfatos (SLS/SLES)',
+                    Silicones: 'Siliconas',
+                    EssentialOils: 'Aceites esenciales',
+                    Retinoids: 'Retinoides',
+                    MineralOil: 'Aceite mineral'
+                }
+            },
+            complete: 'Completar perfil de piel',
+            skip: 'Saltar por ahora',
+            edit: 'Editar perfil de piel'
+        },
+        // MULTI-VERTICAL: Detalles de Productos Cosméticos
+        cosmetic: {
+            attributes: {
+                crueltyFree: 'Libre de crueldad',
+                vegan: 'Vegano',
+                nonComedogenic: 'No comedogénico',
+                fragranceFree: 'Sin fragancia',
+                alcoholFree: 'Sin alcohol',
+                hypoallergenic: 'Hipoalergénico',
+                parabenFree: 'Sin parabenos',
+                sulfateFree: 'Sin sulfatos',
+                spf: 'FPS'
+            },
+            categories: {
+                skincare: 'Skincare',
+                haircare: 'Cuidado capilar',
+                bodycare: 'Cuidado corporal',
+                makeup: 'Maquillaje',
+                suncare: 'Protección solar',
+                fragrance: 'Fragancia'
+            },
+            applicationArea: {
+                face: 'Rostro',
+                body: 'Cuerpo',
+                hair: 'Cabello',
+                lips: 'Labios',
+                eyes: 'Ojos',
+                hands: 'Manos',
+                feet: 'Pies',
+                nails: 'Uñas'
+            },
+            analysis: {
+                keyActives: 'Ingredientes activos clave',
+                irritantsFound: 'Posibles irritantes encontrados',
+                skinCompatibility: 'Compatibilidad con tu piel',
+                suitableFor: 'Adecuado para',
+                notRecommendedFor: 'No recomendado para'
+            }
+        },
+        // MULTI-VERTICAL: Secciones de Lista de Compras
+        shoppingList: {
+            sections: {
+                food: 'Despensa',
+                cosmetic: 'Tocador/Baño'
+            },
+            emojis: {
+                food: '🛒',
+                cosmetic: '🛁'
+            }
         }
     },
     EN: {
@@ -636,6 +755,125 @@ export const translations = {
             support: {
                 help: 'Help & FAQ',
                 helpDesc: 'Get help and support'
+            }
+        },
+        // MULTI-VERTICAL: Product Type Selector
+        productType: {
+            selector: {
+                title: 'What are you scanning?',
+                food: 'Food',
+                cosmetic: 'Cosmetic',
+                foodDesc: 'Food & beverages',
+                cosmeticDesc: 'Skincare & beauty'
+            },
+            labels: {
+                food: 'Food Product',
+                cosmetic: 'Cosmetic Product'
+            }
+        },
+        // MULTI-VERTICAL: Skin Profile
+        skinProfile: {
+            title: 'Skin Profile',
+            subtitle: 'Help us recommend better skincare products',
+            skinType: {
+                title: 'What is your skin type?',
+                types: {
+                    Dry: 'Dry',
+                    Oily: 'Oily',
+                    Combination: 'Combination',
+                    Normal: 'Normal',
+                    Sensitive: 'Sensitive'
+                },
+                descriptions: {
+                    Dry: 'Feels tight, may have flaky patches',
+                    Oily: 'Shiny, enlarged pores, prone to breakouts',
+                    Combination: 'Oily T-zone, dry cheeks',
+                    Normal: 'Balanced, few imperfections',
+                    Sensitive: 'Easily irritated, redness prone'
+                }
+            },
+            concerns: {
+                title: 'Select your skin concerns',
+                subtitle: 'Choose all that apply',
+                options: {
+                    Acne: 'Acne',
+                    Rosacea: 'Rosacea',
+                    Aging: 'Aging/Wrinkles',
+                    Hyperpigmentation: 'Dark Spots',
+                    Dryness: 'Dryness',
+                    Oiliness: 'Excess Oil',
+                    LargePores: 'Large Pores',
+                    Blackheads: 'Blackheads',
+                    Sensitivity: 'Sensitivity',
+                    Dermatitis: 'Dermatitis/Eczema'
+                }
+            },
+            avoid: {
+                title: 'Ingredients to avoid',
+                subtitle: 'Select ingredients you want to avoid',
+                options: {
+                    Fragrance: 'Fragrance/Perfume',
+                    Parabens: 'Parabens',
+                    Alcohol: 'Drying Alcohols',
+                    Sulfates: 'Sulfates (SLS/SLES)',
+                    Silicones: 'Silicones',
+                    EssentialOils: 'Essential Oils',
+                    Retinoids: 'Retinoids',
+                    MineralOil: 'Mineral Oil'
+                }
+            },
+            complete: 'Complete skin profile',
+            skip: 'Skip for now',
+            edit: 'Edit skin profile'
+        },
+        // MULTI-VERTICAL: Cosmetic Product Details
+        cosmetic: {
+            attributes: {
+                crueltyFree: 'Cruelty Free',
+                vegan: 'Vegan',
+                nonComedogenic: 'Non-Comedogenic',
+                fragranceFree: 'Fragrance Free',
+                alcoholFree: 'Alcohol Free',
+                hypoallergenic: 'Hypoallergenic',
+                parabenFree: 'Paraben Free',
+                sulfateFree: 'Sulfate Free',
+                spf: 'SPF'
+            },
+            categories: {
+                skincare: 'Skincare',
+                haircare: 'Haircare',
+                bodycare: 'Body Care',
+                makeup: 'Makeup',
+                suncare: 'Sun Care',
+                fragrance: 'Fragrance'
+            },
+            applicationArea: {
+                face: 'Face',
+                body: 'Body',
+                hair: 'Hair',
+                lips: 'Lips',
+                eyes: 'Eyes',
+                hands: 'Hands',
+                feet: 'Feet',
+                nails: 'Nails'
+            },
+            analysis: {
+                keyActives: 'Key Active Ingredients',
+                irritantsFound: 'Potential Irritants Found',
+                skinCompatibility: 'Skin Compatibility',
+                suitableFor: 'Suitable for',
+                notRecommendedFor: 'Not recommended for'
+            }
+        },
+        // MULTI-VERTICAL: Shopping List Sections
+        shoppingList: {
+            sections: {
+                food: 'Pantry',
+                cosmetic: 'Bathroom/Skincare'
+            },
+            emojis: {
+                food: '🛒',
+                cosmetic: '🛁'
             }
         }
     }

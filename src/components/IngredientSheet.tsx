@@ -115,14 +115,14 @@ export function IngredientSheet({ isOpen, onClose, result }: Props) {
                 </details>
 
                 {/* Footer con fuente */}
-                <div className="ingredient-sheet__footer">
-                    <span className="ingredient-sheet__source">
-                        📚 {ingredient.sourceReference}
+                <footer className="ingredient-sheet__footer">
+                    <span className="text-muted-foreground">
+                        📚 {language === 'ES' ? 'Fuente' : 'Source'}: {ingredient.sourceReference}
                     </span>
-                    <span className="ingredient-sheet__date">
-                        {ingredient.lastVerified}
+                    <span className="text-muted-foreground flex items-center gap-1">
+                        🗓️ {ingredient.lastVerified}
                     </span>
-                </div>
+                </footer>
             </SheetContent>
         </Sheet>
     );
@@ -269,14 +269,17 @@ function getRiskLabel(riskLevel: RiskLevel): string {
 }
 
 function getOriginLabel(origin: string, language: 'ES' | 'EN'): string {
-    const labels: Record<string, Record<string, string>> = {
-        synthetic: { ES: 'Sintético', EN: 'Synthetic' },
-        natural: { ES: 'Natural', EN: 'Natural' },
-        animal: { ES: 'Animal', EN: 'Animal' },
-        mineral: { ES: 'Mineral', EN: 'Mineral' },
-        mixed: { ES: 'Mixto', EN: 'Mixed' },
-        unknown: { ES: 'Desconocido', EN: 'Unknown' },
+    const labels: Record<string, { ES: string; EN: string }> = {
+        synthetic: { ES: '🧪 Sintético', EN: '🧪 Synthetic' },
+        natural: { ES: '🌿 Natural', EN: '🌿 Natural' },
+        animal: { ES: '🐄 Animal', EN: '🐄 Animal' },
+        // CORRECCIÓN: Emoji estándar de roca/mineral para evitar errores de codificación
+        mineral: { ES: '🪨 Mineral', EN: '🪨 Mineral' },
+        mixed: { ES: '🔀 Mixto', EN: '🔀 Mixed' },
+        unknown: { ES: '❓ Desconocido', EN: '❓ Unknown' },
     };
+
+    // Fallback de seguridad: si el origen no está en la lista, lo muestra tal cual
     return labels[origin]?.[language] || origin;
 }
 

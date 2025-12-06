@@ -3767,12 +3767,29 @@ html {
 
 /* === INGREDIENT SHEET (Container) === */
 .ingredient-sheet {
+  /* Dimensiones fijas de móvil */
+  width: 100%;
+  max-width: 28rem;
+  /* 450px aprox */
   max-height: 85vh;
-  border-radius: 1.5rem 1.5rem 0 0;
+
+  /* Centrado Absoluto (Matemático) */
+  position: fixed;
+  left: 50%;
+  right: auto;
+  /* Anular estiramiento */
+  bottom: 0;
+  transform: translateX(-50%);
+  /* Esto corrige el desvío a la derecha */
+
+  /* Estética */
+  border-radius: var(--radius) var(--radius) 0 0;
   background: var(--card);
   z-index: 100 !important;
   padding: 0 1.5rem 2rem;
-  padding-bottom: max(env(safe-area-inset-bottom, 20px), 2rem);
+  padding-bottom: env(safe-area-inset-bottom, 20px);
+  margin: 0;
+  /* Resetear márgenes que puedan empujar */
   overflow-y: auto;
 }
 

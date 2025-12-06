@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { X, Camera, Flashlight, ScanBarcode, AlertCircle } from 'lucide-react';
+import { X, Camera, Flashlight, ScanBarcode, AlertCircle, Apple, Sparkles } from 'lucide-react';
 import { barcodeScannerService } from '../../services/barcode-scanner.service';
 import { findProductByBarcode } from '../../services/product-database.service';
 import { analyzeProductWithAI } from '../../services/ai-analysis.service';
 import { StorageService } from '../../lib/storage';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { ProductType } from '../../lib/types';
 
 interface CameraScreenProps {
   onNavigate: (screen: string, data?: any) => void;
@@ -13,9 +14,10 @@ interface CameraScreenProps {
 }
 
 export function CameraScreen({ onNavigate, onClose, context }: CameraScreenProps) {
-  const { language } = useLanguage();
+  const { t, language } = useLanguage();
   const [isFlashOn, setIsFlashOn] = useState(false);
   const [scanMode, setScanMode] = useState<'camera' | 'barcode'>('barcode');
+  const [productType, setProductType] = useState<ProductType>('FOOD');
   const [isScanning, setIsScanning] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -70,7 +72,7 @@ export function CameraScreen({ onNavigate, onClose, context }: CameraScreenProps
     setIsAnalyzing(true);
     stopScanning();
 
-    console.log('🔍 Searching for barcode:', barcode);
+    console.log('🔍 Searching for barcode:', barcode, 'Type:', productType);
 
     const product = findProductByBarcode(barcode);
 
@@ -95,15 +97,21 @@ export function CameraScreen({ onNavigate, onClose, context }: CameraScreenProps
       navigator.vibrate(200);
     }
 
+    // IMPORTANT: Set the product type based on user selection
+    const typedProduct = {
+      ...product,
+      type: productType
+    };
+
     // Add basic product to history immediately
-    StorageService.addScanHistoryItem(product, false);
+    StorageService.addScanHistoryItem(typedProduct, false);
 
     // Navigate IMMEDIATELY with basic product (no AI yet)
     if (context?.returnTo === 'comparison' && context.currentProducts) {
-      const updatedProducts = [...context.currentProducts, product];
+      const updatedProducts = [...context.currentProducts, typedProduct];
       onNavigate('comparison', { products: updatedProducts });
     } else {
-      onNavigate('scan-result', { product });
+      onNavigate('scan-result', { product: typedProduct });
     }
 
     setIsAnalyzing(false);
@@ -111,23 +119,23 @@ export function CameraScreen({ onNavigate, onClose, context }: CameraScreenProps
     // Analyze with AI in BACKGROUND (non-blocking)
     const userProfile = StorageService.getUserProfile();
     if (userProfile) {
-      console.log(`🤖 Analyzing product in background...`);
-      analyzeProductWithAI(product, userProfile, language)
+      console.log(`🤖 Analyzing ${productType} product in background...`);
+      analyzeProductWithAI(typedProduct, userProfile, language)
         .then(aiResult => {
           // Merge AI results with product
           const enrichedProduct = {
-            ...product,
+            ...typedProduct,
             status: aiResult.status,
             nutritionScore: aiResult.nutritionScore,
             benefits: aiResult.benefits,
             issues: aiResult.issues,
             aiDescription: aiResult.aiDescription,
-            ingredients: aiResult.ingredients || product.ingredients,
-            allergens: aiResult.allergens || product.allergens
+            ingredients: aiResult.ingredients || typedProduct.ingredients,
+            allergens: aiResult.allergens || typedProduct.allergens
           };
 
           // Update in history
-          StorageService.updateProductInHistory(product.id, enrichedProduct);
+          StorageService.updateProductInHistory(typedProduct.id, enrichedProduct);
           console.log('✅ AI analysis completed in background');
         })
         .catch(error => {
@@ -224,10 +232,32 @@ export function CameraScreen({ onNavigate, onClose, context }: CameraScreenProps
             <X className="w-6 h-6 text-white" />
           </button>
 
-          <div className="bg-black/50 backdrop-blur-md rounded-full px-4 py-2 border border-white/10">
-            <p className="text-white text-sm">
-              {scanMode === 'barcode' ? 'Escanear Código' : 'Tomar Foto'}
-            </p>
+          {/* Product Type Selector - TOP CENTER */}
+          <div className="flex gap-2 bg-black/50 backdrop-blur-md rounded-full p-1 border border-white/10">
+            <button
+              onClick={() => setProductType('FOOD')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all ${productType === 'FOOD'
+                  ? 'bg-[#22C55E] text-white'
+                  : 'text-white/60 hover:text-white'
+                }`}
+            >
+              <Apple className="w-4 h-4" />
+              <span className="text-sm font-medium">
+                {(t as any).productType?.selector?.food || 'Alimento'}
+              </span>
+            </button>
+            <button
+              onClick={() => setProductType('COSMETIC')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all ${productType === 'COSMETIC'
+                  ? 'bg-[#A855F7] text-white'
+                  : 'text-white/60 hover:text-white'
+                }`}
+            >
+              <Sparkles className="w-4 h-4" />
+              <span className="text-sm font-medium">
+                {(t as any).productType?.selector?.cosmetic || 'Cosmético'}
+              </span>
+            </button>
           </div>
 
           <button
@@ -271,7 +301,7 @@ export function CameraScreen({ onNavigate, onClose, context }: CameraScreenProps
             {isAnalyzing
               ? 'Procesando...'
               : isScanning
-                ? 'Escaneo automático activo'
+                ? `Escaneando ${productType === 'FOOD' ? 'alimento' : 'cosmético'}...`
                 : 'Listo para escanear'}
           </p>
         </div>
@@ -286,3 +316,4 @@ export function CameraScreen({ onNavigate, onClose, context }: CameraScreenProps
     </div>
   );
 }
+

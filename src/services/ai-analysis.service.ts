@@ -156,12 +156,11 @@ function generateCacheKey(productId: string, userProfile: UserProfile, language:
 }
 
 /**
- * Generate AI prompt in the specified language - OPTIMIZED FOR TOKEN EFFICIENCY
+ * Generate FOOD product AI prompt
  */
-function generatePrompt(product: any, userProfile: UserProfile, language: Language): string {
+function generateFoodPrompt(product: any, userProfile: UserProfile, language: Language): string {
     const nutrition = product.nutrition || { servingSize: 'N/A', calories: 0, sugar: 0, sodium: 0, protein: 0, fiber: 0, fat: 0 };
 
-    // Ultra-compact prompt to minimize tokens
     const prompt = language === 'ES' ?
         `Eres nutricionista. Analiza para: ${userProfile.goals.join(', ') || 'salud general'}. Alergias: ${userProfile.allergies.join(', ') || 'ninguna'}. Preferencias: ${userProfile.preferences.join(', ') || 'ninguna'}.
 
@@ -212,6 +211,85 @@ JSON (no markdown):
 }`;
 
     return prompt;
+}
+
+/**
+ * Generate COSMETIC product AI prompt
+ */
+function generateCosmeticPrompt(product: any, userProfile: UserProfile, language: Language): string {
+    const skin = userProfile.skin || { type: 'Normal', concerns: [], avoid: [] };
+    const attributes = product.attributes || {};
+
+    const prompt = language === 'ES' ?
+        `Eres dermatólogo experto. Analiza este cosmético para el perfil de piel del usuario.
+
+PERFIL DE PIEL: Tipo: ${skin.type || 'No especificado'}, Preocupaciones: ${skin.concerns?.join(', ') || 'ninguna'}, Evitar: ${skin.avoid?.join(', ') || 'nada'}
+
+Producto: ${product.name} (${product.brand})
+Categoría: ${product.category || 'skincare'}
+Zona: ${product.applicationArea || 'rostro'}
+Ingredientes: ${product.ingredients?.join(', ') || 'N/A'}
+Atributos: ${attributes.hasFragrance ? 'Con fragancia' : 'Sin fragancia'}, ${attributes.hasAlcohol ? 'Con alcohol' : 'Sin alcohol'}, ${attributes.isNonComedogenic ? 'No comedogénico' : 'Puede ser comedogénico'}
+
+REGLAS CRÍTICAS:
+1. IGNORA calorías/nutrición - esto es un cosmético.
+2. Enfócate en: Comedogenicidad, Irritación, Ingredientes Activos.
+3. Si usuario tiene "Acné" y producto tiene ingredientes comedogénicos → penaliza fuerte.
+4. Si usuario tiene piel "Sensible" y producto tiene Alcohol/Fragancia → penaliza fuerte.
+5. aiDescription: 2 oraciones sobre reacción en piel y beneficios. SIN mencionar el nombre.
+
+JSON (sin markdown):
+{
+  "status": "suitable|questionable|not-recommended",
+  "nutritionScore": 0-100,
+  "benefits": ["beneficio piel 1", "beneficio piel 2"],
+  "issues": ["irritante 1", "problema 2"],
+  "aiDescription": "Tu análisis dermatológico en 2 oraciones",
+  "keyActives": ["Niacinamida", "Ácido Hialurónico"],
+  "irritantsFound": ["Fragancia", "Alcohol"]
+}`
+        :
+        `You're an expert dermatologist. Analyze this cosmetic for the user's skin profile.
+
+SKIN PROFILE: Type: ${skin.type || 'Not specified'}, Concerns: ${skin.concerns?.join(', ') || 'none'}, Avoid: ${skin.avoid?.join(', ') || 'nothing'}
+
+Product: ${product.name} (${product.brand})
+Category: ${product.category || 'skincare'}
+Area: ${product.applicationArea || 'face'}
+Ingredients: ${product.ingredients?.join(', ') || 'N/A'}
+Attributes: ${attributes.hasFragrance ? 'Has fragrance' : 'Fragrance-free'}, ${attributes.hasAlcohol ? 'Has alcohol' : 'Alcohol-free'}, ${attributes.isNonComedogenic ? 'Non-comedogenic' : 'May be comedogenic'}
+
+CRITICAL RULES:
+1. IGNORE calories/nutrition - this is a cosmetic.
+2. Focus on: Comedogenicity, Irritation, Active Ingredients.
+3. If user has "Acne" and product has comedogenic ingredients → penalize heavily.
+4. If user has "Sensitive" skin and product has Alcohol/Fragrance → penalize heavily.
+5. aiDescription: 2 sentences about skin reaction and benefits. DO NOT mention product name.
+
+JSON (no markdown):
+{
+  "status": "suitable|questionable|not-recommended",
+  "nutritionScore": 0-100,
+  "benefits": ["skin benefit 1", "skin benefit 2"],
+  "issues": ["irritant 1", "concern 2"],
+  "aiDescription": "Your dermatological analysis in 2 sentences",
+  "keyActives": ["Niacinamide", "Hyaluronic Acid"],
+  "irritantsFound": ["Fragrance", "Alcohol"]
+}`;
+
+    return prompt;
+}
+
+/**
+ * Generate AI prompt based on product type
+ */
+function generatePrompt(product: any, userProfile: UserProfile, language: Language): string {
+    // Check product type and use appropriate prompt
+    if (product.type === 'COSMETIC') {
+        return generateCosmeticPrompt(product, userProfile, language);
+    }
+    // Default to food prompt (for backward compatibility)
+    return generateFoodPrompt(product, userProfile, language);
 }
 export async function analyzeProductWithAI(
     product: any,

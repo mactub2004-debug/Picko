@@ -18,6 +18,7 @@ import { BottomNav } from './components/BottomNav';
 import { Product } from './lib/demo-data';
 import { StorageService } from './lib/storage';
 import { LanguageProvider } from './contexts/LanguageContext';
+import { validateIngredientsCoverage } from './utils/validate-ingredients';
 
 type AppFlow = 'language' | 'onboarding' | 'registration' | 'main';
 type MainScreen = 'home' | 'search' | 'history' | 'profile' | 'settings' | 'camera' | 'scan-result' | 'recommendations' | 'favorites' | 'comparison' | 'shopping-list' | 'stats';
@@ -37,6 +38,15 @@ function AppContent() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // Validate ingredient coverage in development
+    // @ts-ignore - import.meta.env is defined by Vite
+    if (import.meta.env?.DEV) {
+      const result = validateIngredientsCoverage();
+      if (!result.isValid) {
+        console.error('\u26a0\ufe0f DEMO AT RISK! Missing ingredients. Run window.validateIngredients() for details.');
+      }
+    }
+
     // Check for existing user profile on mount
     const profile = StorageService.getUserProfile();
     if (profile) {

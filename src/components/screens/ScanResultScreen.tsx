@@ -9,6 +9,8 @@ import { useState, useEffect } from 'react';
 import { ComparisonDialog } from '../ComparisonDialog';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { analyzeProductWithAI } from '../../services/ai-analysis.service';
+import { useIngredientSheet } from '../../hooks/useIngredientSheet';
+import { IngredientSheet } from '../IngredientSheet';
 
 interface ScanResultScreenProps {
   product: Product;
@@ -23,6 +25,10 @@ export function ScanResultScreen({ product: initialProduct, onNavigate, onBack }
   const [isPurchased, setIsPurchased] = useState(false);
   const [currentHistoryId, setCurrentHistoryId] = useState<string | null>(null);
   const [showComparisonDialog, setShowComparisonDialog] = useState(false);
+
+  // Ingredient Sheet
+  const userProfile = StorageService.getUserProfile();
+  const ingredientSheet = useIngredientSheet(product.type, userProfile || { allergies: [], preferences: [], goals: [], name: '', email: '', country: '', language: 'ES', skin: { type: null, concerns: [], avoid: [] } });
 
 
 
@@ -308,14 +314,18 @@ export function ScanResultScreen({ product: initialProduct, onNavigate, onBack }
             </div>
           )}
 
-          {/* Ingredients */}
+          {/* Ingredients - Clickable */}
           <div className="mt-4 bg-card rounded-2xl p-4 border border-border">
             <h3>{t.scanResult.ingredients}</h3>
             <div className="flex flex-wrap gap-2 mt-3">
               {product.ingredients.map((ingredient, index) => (
-                <Badge key={index} variant="secondary">
+                <button
+                  key={index}
+                  className="ingredient-chip ingredient-chip--clickable"
+                  onClick={() => ingredientSheet.openIngredient(ingredient)}
+                >
                   {ingredient}
-                </Badge>
+                </button>
               ))}
             </div>
           </div>
@@ -426,6 +436,13 @@ export function ScanResultScreen({ product: initialProduct, onNavigate, onBack }
           setShowComparisonDialog(false);
           onNavigate('comparison', { products: [product, historyProduct] });
         }}
+      />
+
+      {/* Ingredient Detail Sheet */}
+      <IngredientSheet
+        isOpen={ingredientSheet.isOpen}
+        onClose={ingredientSheet.close}
+        result={ingredientSheet.result}
       />
     </>
   );

@@ -105,13 +105,21 @@ export function HomeScreen({ onNavigate }: HomeScreenProps) {
           allergens: aiResult.allergens || product.allergens
         };
 
-        // Navigate with fresh analysis (don't save to history - only camera scans are saved)
+        // ✅ SOLUCIÓN: Guardar en historial AQUÍ para que cuente como escaneo real
+        // Esto evita que se cree un registro duplicado al marcar como "comprado"
+        StorageService.addScanHistoryItem(enrichedProduct, false);
+
+        // Navigate with fresh analysis
         onNavigate('scan-result', { product: enrichedProduct });
       } else {
+        // Fallback sin perfil - también guardar
+        StorageService.addScanHistoryItem(product, false);
         onNavigate('scan-result', { product });
       }
     } catch (error) {
       console.error('Error analyzing product:', error);
+      // Incluso si falla la IA, guardar para que el usuario pueda verlo en historial
+      StorageService.addScanHistoryItem(product, false);
       onNavigate('scan-result', { product });
     } finally {
       setIsAnalyzing(null);

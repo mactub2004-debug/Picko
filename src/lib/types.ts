@@ -277,3 +277,78 @@ export const APPLICATION_AREAS: { value: ApplicationArea; label: string; emoji: 
     { value: 'feet', label: 'Feet', emoji: '🦶' },
     { value: 'nails', label: 'Nails', emoji: '💅' }
 ];
+
+// ============================================
+// INGREDIENT DETAIL SYSTEM (Static Database)
+// ============================================
+
+export type RegulatoryStatus = 'permitted' | 'restricted' | 'banned' | 'unknown';
+export type RiskLevel = 'safe' | 'low' | 'moderate' | 'high' | 'unknown';
+export type IngredientOrigin = 'synthetic' | 'natural' | 'animal' | 'mineral' | 'mixed' | 'unknown';
+export type IngredientContext = 'FOOD' | 'COSMETIC' | 'BOTH';
+
+export interface RegulatoryInfo {
+    status: RegulatoryStatus;
+    maxConcentration?: string;
+    notes?: string;
+}
+
+export interface IngredientDetail {
+    // === IDENTIDAD ===
+    id: string;
+    name: string;
+    aliases: string[];
+
+    // === CONTEXTO ===
+    context: IngredientContext;
+
+    // === DESCRIPCIÓN ===
+    description: {
+        es: string;
+        en: string;
+    };
+    functionCategories: string[];
+    origin: IngredientOrigin;
+
+    // === PUNTUACIÓN ESTÁTICA ===
+    safetyScore: number | null;
+
+    // === REGULACIONES ===
+    regulations: {
+        region: 'EU' | 'USA' | 'LATAM';
+        info: RegulatoryInfo;
+    }[];
+
+    // === CONTEXTO ESPECÍFICO (Cosmético) ===
+    comedogenicRating?: number;
+    irritationPotential?: 'none' | 'low' | 'moderate' | 'high';
+
+    // === CONTEXTO ESPECÍFICO (Alimento) ===
+    isCommonAllergen?: boolean;
+    allergenType?: string;
+
+    // === CREDIBILIDAD ===
+    sourceReference: string;
+    lastVerified: string;
+}
+
+// === HELPER: Calcular Risk Level desde Score ===
+export function getRiskLevel(score: number | null): RiskLevel {
+    if (score === null) return 'unknown';
+    if (score >= 80) return 'safe';
+    if (score >= 60) return 'low';
+    if (score >= 40) return 'moderate';
+    return 'high';
+}
+
+// === HELPER: Color según Risk Level ===
+export function getRiskColor(riskLevel: RiskLevel): string {
+    const colors: Record<RiskLevel, string> = {
+        safe: 'var(--success)',
+        low: 'var(--success)',
+        moderate: 'var(--warning)',
+        high: 'var(--destructive)',
+        unknown: 'var(--muted-foreground)',
+    };
+    return colors[riskLevel];
+}

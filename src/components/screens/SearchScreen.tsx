@@ -93,14 +93,20 @@ export function SearchScreen({ onNavigate }: SearchScreenProps) {
           allergens: aiResult.allergens || product.allergens
         };
 
-        // Navigate with fresh analysis (don't save to history)
+        // ✅ SOLUCIÓN: Guardar en historial AQUÍ para que cuente como escaneo real
+        StorageService.addScanHistoryItem(enrichedProduct, false);
+
+        // Navigate with fresh analysis
         onNavigate('scan-result', { product: enrichedProduct });
       } else {
-        // Fallback if no profile
+        // Fallback if no profile - también guardar
+        StorageService.addScanHistoryItem(product, false);
         onNavigate('scan-result', { product });
       }
     } catch (error) {
       console.error('Error analyzing product:', error);
+      // Guardar aunque falle el análisis
+      StorageService.addScanHistoryItem(product, false);
       onNavigate('scan-result', { product });
     } finally {
       setIsAnalyzing(null);

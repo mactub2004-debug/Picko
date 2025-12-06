@@ -321,7 +321,7 @@ export function ScanResultScreen({ product: initialProduct, onNavigate, onBack }
           </div>
 
           {/* Allergens */}
-          {product.allergens.length > 0 && (
+          {product.allergens && product.allergens.length > 0 && (
             <div className="mt-4 bg-card rounded-2xl p-4 border border-border">
               <h3>{t.scanResult.allergens}</h3>
               <div className="flex flex-wrap gap-2 mt-3">

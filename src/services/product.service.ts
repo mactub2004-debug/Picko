@@ -1,4 +1,5 @@
-import { Product, demoProducts, UserProfile } from '../lib/demo-data';
+import { Product, demoProducts, demoFoodProducts, UserProfile } from '../lib/demo-data';
+import { isFoodProduct, FoodProduct } from '../lib/types';
 import { StorageService } from '../lib/storage';
 
 export const ProductService = {
@@ -26,7 +27,7 @@ export const ProductService = {
         // Merge demo products with scanned data
         const merged = demoProducts.map(demoProduct => {
             const scannedVersion = scannedProductMap.get(demoProduct.id);
-            if (scannedVersion && scannedVersion.nutritionScore !== undefined) {
+            if (scannedVersion && (scannedVersion.nutritionScore !== undefined || scannedVersion.score !== undefined)) {
                 return scannedVersion;
             }
             return demoProduct;
@@ -49,13 +50,24 @@ export const ProductService = {
     },
 
     /**
+     * Get all products filtered by type
+     */
+    getProductsByType: (type: 'FOOD' | 'COSMETIC'): Product[] => {
+        return ProductService.getAllProducts().filter(p => p.type === type);
+    },
+
+    /**
      * Get recommended products based on user profile rules (NO AI).
      * Rules:
      * 1. EXCLUDE products containing user allergens.
      * 2. PRIORITIZE products matching goals (simple heuristics).
+     * 3. For now, only recommend FOOD products (cosmetic recommendations TBD)
      */
     getRecommendedProducts: (userProfile: UserProfile): Product[] => {
         const allProducts = ProductService.getAllProducts();
+
+        // Filter to only FOOD products for recommendations (cosmetics need different logic)
+        const foodProducts = allProducts.filter(isFoodProduct);
 
         // Map user allergen names to technical IDs
         const allergenMap: Record<string, string> = {
@@ -70,49 +82,56 @@ export const ProductService = {
             'Shellfish': 'shellfish', 'Mariscos': 'shellfish'
         };
 
-        // Helper to check safety
-        const isSafe = (product: Product) => {
+        // Helper to check safety (only for food products with allergens)
+        const isSafe = (product: FoodProduct) => {
             if (!product.allergens || product.allergens.length === 0) return true;
             return !userProfile.allergies.some(userAllergen => {
                 const normalizedUserAllergen = allergenMap[userAllergen] || userAllergen.toLowerCase();
-                return product.allergens!.some(productAllergen =>
+                return product.allergens.some(productAllergen =>
                     productAllergen.toLowerCase() === normalizedUserAllergen
                 );
             });
         };
 
-        // 1. Always include SCANNED products (so user can see what they scanned, even if not recommended)
-        // Identify scanned products by checking if they are NOT in the original demo set OR if they have a score (modified)
-        const scannedProducts = allProducts.filter(p => !demoProducts.find(dp => dp.id === p.id) || p.nutritionScore !== undefined);
+        // 1. Always include SCANNED food products
+        const scannedFoodProducts = foodProducts.filter(p =>
+            !demoFoodProducts.find(dp => dp.id === p.id) ||
+            p.nutritionScore !== undefined ||
+            p.score !== undefined
+        );
 
-        // 2. Filter DEMO products for safety (recommendations should be safe)
-        const safeDemoProducts = demoProducts.filter(p =>
-            !scannedProducts.find(sp => sp.id === p.id) && isSafe(p)
+        // 2. Filter DEMO food products for safety
+        const safeDemoProducts = demoFoodProducts.filter(p =>
+            !scannedFoodProducts.find(sp => sp.id === p.id) && isSafe(p)
         );
 
         // Combine: Scanned first, then safe recommendations
-        const combined = [...scannedProducts, ...safeDemoProducts];
+        const combined = [...scannedFoodProducts, ...safeDemoProducts];
 
-        // 3. Score based on goals (Simple Heuristic)
+        // 3. Score based on goals (Simple Heuristic) - ONLY for food products
         const scoredProducts = combined.map(product => {
             let score = 0;
 
+            // Safely access nutrition (all food products should have it)
+            const nutrition = product.nutrition;
+            if (!nutrition) return { product, score: 0 };
+
             // Goal: Muscle Gain -> High Protein
             if (userProfile.goals.includes('Gain muscle') || userProfile.goals.includes('Ganar masa muscular')) {
-                if (product.nutrition.protein > 10) score += 2;
-                if (product.nutrition.protein > 20) score += 3;
+                if (nutrition.protein > 10) score += 2;
+                if (nutrition.protein > 20) score += 3;
             }
 
             // Goal: Lose Weight -> Low Calories / Low Sugar
             if (userProfile.goals.includes('Lose weight') || userProfile.goals.includes('Perder peso')) {
-                if (product.nutrition.calories < 200) score += 2;
-                if (product.nutrition.sugar < 5) score += 2;
+                if (nutrition.calories < 200) score += 2;
+                if (nutrition.sugar < 5) score += 2;
             }
 
             // Goal: Eat Healthy -> High Fiber / Low Sodium
             if (userProfile.goals.includes('Eat healthy') || userProfile.goals.includes('Comer saludable')) {
-                if (product.nutrition.fiber > 3) score += 1;
-                if (product.nutrition.sodium < 140) score += 1;
+                if (nutrition.fiber > 3) score += 1;
+                if (nutrition.sodium < 140) score += 1;
                 if (product.ingredients.length < 5) score += 2; // Less processed
             }
 

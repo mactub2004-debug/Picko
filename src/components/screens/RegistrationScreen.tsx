@@ -1,324 +1,354 @@
+/**
+ * RegistrationScreen - 8-Step Registration Flow
+ * Includes Food + Cosmetic (Skin) profile setup
+ * 
+ * @version 2.0 Multi-Vertical
+ */
+
 import { useState } from 'react';
-import { ChevronLeft, ChevronRight, ClipboardList } from 'lucide-react';
+import {
+  ChevronLeft, ChevronRight, ClipboardList,
+  Milk, Egg, Fish, Shell, Nut, Wheat, Bean, Cookie,
+  Leaf, Carrot, ShieldCheck, Droplet, Utensils, Flame, Zap,
+  TrendingDown, TrendingUp, Weight, Activity, Sparkles, Heart, Apple, Stethoscope,
+  Sun, Frown, Smile, Search
+} from 'lucide-react';
+import { motion } from 'framer-motion';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { Label } from '../ui/label';
-import { Badge } from '../ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { countries } from '../../lib/demo-data';
-import { StorageService } from '../../lib/storage';
+import {
+  countries,
+  languages as supportedLanguages,
+  skinTypes
+} from '../../lib/demo-data';
 import { useLanguage } from '../../contexts/LanguageContext';
-import { clearAnalysisCache } from '../../services/ai-analysis.service';
+import { StorageService } from '../../lib/storage';
 
 interface RegistrationScreenProps {
   onComplete: () => void;
 }
 
 export function RegistrationScreen({ onComplete }: RegistrationScreenProps) {
-  const { t, language } = useLanguage();
+  const { t, language, setLanguage } = useLanguage();
   const [step, setStep] = useState(1);
+  const totalSteps = 8;
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     country: '',
-    language: language, // Use global language
+    language: language === 'ES' ? 'Español' : 'English',
     allergies: [] as string[],
     preferences: [] as string[],
-    goals: [] as string[]
+    goals: [] as string[],
+    skinType: '' as string,
+    skinConcerns: [] as string[]
   });
 
-  const toggleSelection = (category: 'allergies' | 'preferences' | 'goals', item: string) => {
-    if (category === 'goals') {
-      // Max 2 selection for goals
-      setFormData(prev => {
-        const current = prev[category];
-        if (current.includes(item)) {
-          return { ...prev, [category]: current.filter(i => i !== item) };
-        }
-        if (current.length >= 2) {
-          return prev; // Max reached
-        }
-        return { ...prev, [category]: [...current, item] };
-      });
-    } else {
-      // Multi select for others
-      setFormData(prev => ({
-        ...prev,
-        [category]: prev[category].includes(item)
-          ? prev[category].filter(i => i !== item)
-          : [...prev[category], item]
-      }));
-    }
+  const toggleSelection = (category: 'allergies' | 'preferences' | 'goals' | 'skinConcerns', item: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [category]: prev[category].includes(item)
+        ? prev[category].filter(i => i !== item)
+        : [...prev[category], item]
+    }));
+  };
+
+  const handleLanguageChange = (val: string) => {
+    setFormData({ ...formData, language: val });
+    setLanguage(val === 'English' ? 'EN' : 'ES');
   };
 
   const canProceed = () => {
     if (step === 1) return formData.name && formData.email && formData.country;
+    if (step === 6) return !!formData.skinType; // Skin Type obligatorio
     return true;
   };
 
-  const totalSteps = 6;
+  const handleComplete = () => {
+    const finalProfile = {
+      name: formData.name,
+      email: formData.email,
+      country: formData.country,
+      language: formData.language === 'English' ? 'EN' : 'ES',
+      allergies: formData.allergies,
+      preferences: formData.preferences,
+      goals: formData.goals,
+      skin: {
+        type: formData.skinType as any,
+        concerns: formData.skinConcerns,
+        avoid: []
+      }
+    };
+
+    StorageService.saveUserProfile(finalProfile as any);
+    onComplete();
+  };
+
+  // --- ICON MAPPINGS (supports both ES and EN labels) ---
+  const getIcon = (name: string) => {
+    const icons: Record<string, any> = {
+      // Allergens EN
+      'Gluten': Wheat, 'Milk': Milk, 'Eggs': Egg, 'Fish': Fish, 'Shellfish': Shell,
+      'Crustaceans': Shell, 'Tree Nuts': Nut, 'Nuts': Nut, 'Peanuts': Nut, 'Wheat': Wheat,
+      'Soy': Bean, 'Sesame': Cookie,
+      // Allergens ES
+      'Leche': Milk, 'Huevos': Egg, 'Pescado': Fish, 'Crustáceos': Shell,
+      'Nueces': Nut, 'Maní': Nut, 'Trigo': Wheat, 'Soja': Bean, 'Sésamo': Cookie,
+      // Preferences EN
+      'Vegan': Leaf, 'Vegetarian': Carrot, 'Gluten Free': ShieldCheck, 'Gluten-free': ShieldCheck,
+      'Dairy Free': Droplet, 'Dairy-free': Droplet, 'Organic': Leaf,
+      'Low Sugar': Apple, 'Low sugar': Apple, 'Low Sodium': Droplet, 'Low sodium': Droplet,
+      'High Protein': Flame, 'High protein': Flame, 'Keto': Zap, 'Keto-friendly': Zap, 'Paleo': Utensils,
+      // Preferences ES
+      'Vegano': Leaf, 'Vegetariano': Carrot, 'Sin gluten': ShieldCheck, 'Sin lácteos': Droplet,
+      'Orgánico': Leaf, 'Bajo en azúcar': Apple, 'Bajo en sodio': Droplet, 'Alto en proteína': Flame,
+      // Goals EN
+      'Lose Weight': TrendingDown, 'Lose weight': TrendingDown, 'Build Muscle': TrendingUp, 'Gain muscle': TrendingUp,
+      'Maintain Weight': Weight, 'Maintain weight': Weight, 'Improve Energy': Zap, 'Improve energy': Zap,
+      'Better Digestion': Activity, 'Better digestion': Activity, 'Heart Health': Heart, 'Heart health': Heart,
+      'Manage Diabetes': Stethoscope, 'Manage diabetes': Stethoscope, 'Reduce Cholesterol': Sparkles, 'Reduce cholesterol': Sparkles,
+      // Goals ES  
+      'Perder peso': TrendingDown, 'Ganar músculo': TrendingUp, 'Mantener peso': Weight,
+      'Mejorar energía': Zap, 'Mejor digestión': Activity, 'Salud del corazón': Heart,
+      'Controlar diabetes': Stethoscope, 'Reducir colesterol': Sparkles,
+      // Skin Types
+      'Dry': Sun, 'Oily': Droplet, 'Combination': Activity, 'Normal': Smile, 'Sensitive': ShieldCheck,
+      // Skin Concerns EN
+      'Acne': Frown, 'Aging': Activity, 'Dark Spots': Sun, 'Pores': Search,
+      'Sensitivity': ShieldCheck, 'Dryness': Sun, 'Oiliness': Droplet, 'Redness': Flame,
+      // Skin Concerns ES
+      'Acné': Frown, 'Envejecimiento': Activity, 'Manchas': Sun, 'Poros': Search,
+      'Sensibilidad': ShieldCheck, 'Sequedad': Sun, 'Grasa excesiva': Droplet, 'Rojeces': Flame
+    };
+    return icons[name] || Sparkles;
+  };
+
+  // Helper to get skin type label from value
+  const getSkinTypeLabel = (value: string) => {
+    // @ts-ignore - Dynamic access
+    return t.registration?.step6?.options?.[value] || value;
+  };
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] flex flex-col">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-6 pt-10 pb-6">
-        <div className="max-w-md mx-auto relative flex items-center justify-center">
+        <div className="max-w-md mx-auto flex items-center gap-3">
           {step > 1 && (
-            <button
-              onClick={() => setStep(step - 1)}
-              className="absolute left-0 p-2 hover:bg-gray-100 rounded-full"
-            >
+            <button onClick={() => setStep(step - 1)} className="p-2 hover:bg-gray-100 rounded-full -ml-2 transition-colors">
               <ChevronLeft className="w-6 h-6" />
             </button>
           )}
-          <div className="text-center">
+          <div className="flex-1">
             <h1 className="text-xl font-bold">{t.registration.header.title}</h1>
-            <p className="text-sm text-muted-foreground">{t.registration.header.step} {step} of {totalSteps}</p>
+            <p className="text-sm text-muted-foreground">{t.registration.header.step} {step} / {totalSteps}</p>
           </div>
         </div>
       </div>
 
       {/* Progress */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-md mx-auto">
-          <div className="h-1.5 bg-gray-100">
-            <div
-              className="h-full bg-[#22C55E] transition-all duration-300"
-              style={{ width: `${(step / totalSteps) * 100}%` }}
-            />
-          </div>
+        <div className="max-w-md mx-auto h-1.5 bg-gray-100">
+          <motion.div
+            className="h-full bg-[#22C55E]"
+            initial={{ width: 0 }}
+            animate={{ width: `${(step / totalSteps) * 100}%` }}
+            transition={{ duration: 0.3 }}
+          />
         </div>
       </div>
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-md mx-auto p-6">
+
+          {/* STEP 1: BASIC INFO */}
           {step === 1 && (
-            <div className="space-y-5">
+            <motion.div
+              className="space-y-5"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
               <div>
-                <h2 className="mb-2">{t.registration.step1.title}</h2>
-                <p className="text-sm text-muted-foreground">
-                  {t.registration.step1.subtitle}
-                </p>
+                <h2 className="text-2xl font-bold mb-2">{t.registration.step1.title}</h2>
+                <p className="text-sm text-muted-foreground">{t.registration.step1.subtitle}</p>
               </div>
-              <div>
-                <Label htmlFor="name" className="text-sm mb-2 block">{t.registration.step1.nameLabel}</Label>
+              <div className="space-y-4">
                 <Input
-                  id="name"
-                  autoComplete="name"
-                  placeholder={t.registration.step1.namePlaceholder}
-                  maxLength={20}
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={e => setFormData({ ...formData, name: e.target.value })}
                   className="bg-white h-12 rounded-xl"
+                  placeholder={t.registration.step1.namePlaceholder}
                 />
-                <p className="text-xs text-muted-foreground mt-1 text-right">
-                  {formData.name.length}/20
-                </p>
-              </div>
-              <div>
-                <Label htmlFor="email" className="text-sm mb-2 block">{t.registration.step1.emailLabel}</Label>
                 <Input
-                  id="email"
-                  type="email"
-                  autoComplete="email"
-                  placeholder={t.registration.step1.emailPlaceholder}
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={e => setFormData({ ...formData, email: e.target.value })}
                   className="bg-white h-12 rounded-xl"
+                  placeholder={t.registration.step1.emailPlaceholder}
+                  type="email"
                 />
-              </div>
-              <div>
-                <Label htmlFor="country" className="text-sm mb-2 block">{t.registration.step1.countryLabel}</Label>
-                <Select value={formData.country} onValueChange={(value: string) => setFormData({ ...formData, country: value })}>
+                <Select value={formData.country} onValueChange={(v: string) => setFormData({ ...formData, country: v })}>
                   <SelectTrigger className="bg-white h-12 rounded-xl">
                     <SelectValue placeholder={t.registration.step1.countryPlaceholder} />
                   </SelectTrigger>
                   <SelectContent>
-                    {countries.map((country) => (
-                      <SelectItem key={country} value={country}>
-                        {country}
-                      </SelectItem>
-                    ))}
+                    {countries.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+                <Select value={formData.language} onValueChange={handleLanguageChange}>
+                  <SelectTrigger className="bg-white h-12 rounded-xl">
+                    <SelectValue placeholder={t.registration.step1.languagePlaceholder} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {supportedLanguages.map(l => <SelectItem key={l} value={l}>{l}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
-            </div>
+            </motion.div>
           )}
 
+          {/* STEP 2: TRANSITION */}
           {step === 2 && (
-            <div className="space-y-6 flex flex-col items-center justify-center min-h-[60vh]">
-              {/* Layered circular icon */}
-              <div className="relative w-48 h-48 flex items-center justify-center animate-in zoom-in-95 fade-in duration-700">
-                {/* Outer circle - continuous pulse */}
-                <div className="absolute w-48 h-48 rounded-full bg-[#22C55E]/10 animate-pulse" style={{ animationDuration: '3s' }} />
-                {/* Middle circle - subtle pulse */}
-                <div className="absolute w-36 h-36 rounded-full bg-[#22C55E]/20 animate-pulse" style={{ animationDuration: '4s', animationDelay: '0.5s' }} />
-                {/* Inner circle - bounce effect - INCREASED OPACITY/CONTRAST */}
-                <div className="absolute w-24 h-24 rounded-full bg-[#22C55E] flex items-center justify-center animate-pulse shadow-lg shadow-[#22C55E]/30" style={{ animationDuration: '2.5s' }}>
-                  <ClipboardList className="w-12 h-12 text-white animate-pulse" strokeWidth={2.5} style={{ animationDuration: '2s' }} />
-                </div>
+            <motion.div
+              className="space-y-6 flex flex-col items-center justify-center min-h-[50vh]"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <div className="relative w-40 h-40 flex items-center justify-center">
+                <div className="absolute inset-0 rounded-full bg-[#22C55E]/20 animate-pulse" style={{ animationDuration: '2s' }} />
+                <div className="absolute inset-4 rounded-full bg-[#22C55E]/30 animate-pulse" style={{ animationDuration: '2.5s', animationDelay: '0.3s' }} />
+                <ClipboardList className="w-16 h-16 text-[#22C55E]" strokeWidth={2} />
               </div>
-
-              {/* Text content */}
-              <div className="text-center max-w-sm px-6 animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: '300ms' }}>
-                <h2 className="mb-3">{t.registration.step2.title}</h2>
-              </div>
-            </div>
+              <h2 className="text-center px-4 text-xl font-semibold">{t.registration.step2.title}</h2>
+            </motion.div>
           )}
 
+          {/* STEP 3: ALLERGIES */}
           {step === 3 && (
-            <div className="space-y-5">
-              <div>
-                <h2 className="mb-2">{t.registration.step3.title}</h2>
-                <p className="text-sm text-muted-foreground">
-                  {t.registration.step3.subtitle}
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {t.lists.allergens.map((allergen) => (
-                  <Badge
-                    key={allergen}
-                    variant={formData.allergies.includes(allergen) ? 'default' : 'outline'}
-                    className={`cursor-pointer transition-all px-4 py-2 ${formData.allergies.includes(allergen)
-                      ? 'bg-[#22C55E] text-white border-[#22C55E] hover:bg-[#22C55E]/90'
-                      : 'hover:border-[#22C55E]/50'
-                      }`}
-                    onClick={() => toggleSelection('allergies', allergen)}
-                  >
-                    {allergen}
-                  </Badge>
-                ))}
-              </div>
-              <p className="text-xs text-muted-foreground italic">
-                {t.registration.step3.skip}
-              </p>
-            </div>
+            <SelectionStep
+              title={t.registration.step3.title}
+              subtitle={t.registration.step3.subtitle}
+              items={t.lists.allergens}
+              selected={formData.allergies}
+              onToggle={(i: string) => toggleSelection('allergies', i)}
+              color="#EF4444"
+              getIcon={getIcon}
+            />
           )}
 
+          {/* STEP 4: DIETARY PREFERENCES */}
           {step === 4 && (
-            <div className="space-y-5">
-              <div>
-                <h2 className="mb-2">{t.registration.step4.title}</h2>
-                <p className="text-sm text-muted-foreground">
-                  {t.registration.step4.subtitle}
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {t.lists.dietaryPreferences.map((pref) => (
-                  <Badge
-                    key={pref}
-                    variant={formData.preferences.includes(pref) ? 'default' : 'outline'}
-                    className={`cursor-pointer transition-all px-4 py-2 ${formData.preferences.includes(pref)
-                      ? 'bg-[#22C55E] text-white border-[#22C55E] hover:bg-[#22C55E]/90'
-                      : 'hover:border-[#22C55E]/50'
-                      }`}
-                    onClick={() => toggleSelection('preferences', pref)}
-                  >
-                    {pref}
-                  </Badge>
-                ))}
-              </div>
-              <p className="text-xs text-muted-foreground italic">
-                {t.registration.step4.optional}
-              </p>
-            </div>
+            <SelectionStep
+              title={t.registration.step4.title}
+              subtitle={t.registration.step4.subtitle}
+              items={t.lists.dietaryPreferences}
+              selected={formData.preferences}
+              onToggle={(i: string) => toggleSelection('preferences', i)}
+              color="#22C55E"
+              getIcon={getIcon}
+            />
           )}
 
+          {/* STEP 5: HEALTH GOALS */}
           {step === 5 && (
-            <div className="space-y-5">
-              <div>
-                <h2 className="mb-2">{t.registration.step5.title}</h2>
-                <p className="text-sm text-muted-foreground">
-                  {t.registration.step5.subtitle}
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {t.lists.healthGoals.map((goal) => (
-                  <Badge
-                    key={goal}
-                    variant={formData.goals.includes(goal) ? 'default' : 'outline'}
-                    className={`cursor-pointer transition-all px-4 py-2 ${formData.goals.includes(goal)
-                      ? 'bg-[#22C55E] text-white border-[#22C55E] hover:bg-[#22C55E]/90'
-                      : 'hover:border-[#22C55E]/50'
-                      }`}
-                    onClick={() => toggleSelection('goals', goal)}
-                  >
-                    {goal}
-                  </Badge>
-                ))}
-              </div>
-              <p className="text-xs text-muted-foreground italic">
-                {t.registration.step5.optional}
-              </p>
-            </div>
+            <SelectionStep
+              title={t.registration.step5.title}
+              subtitle={t.registration.step5.subtitle}
+              items={t.lists.healthGoals}
+              selected={formData.goals}
+              onToggle={(i: string) => toggleSelection('goals', i)}
+              color="#3B82F6"
+              getIcon={getIcon}
+            />
           )}
 
+          {/* STEP 6: SKIN TYPE */}
           {step === 6 && (
-            <div className="space-y-5">
+            <motion.div
+              className="space-y-5"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
               <div>
-                <h2 className="mb-2">{t.registration.step6.title}</h2>
-                <p className="text-sm text-muted-foreground">
-                  {t.registration.step6.subtitle}
-                </p>
+                <h2 className="text-2xl font-bold">{t.registration.step6.title}</h2>
+                <p className="text-sm text-muted-foreground">{t.registration.step6.subtitle}</p>
               </div>
-              <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-4">
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">{t.registration.step6.labels.name}</p>
-                  <p>{formData.name}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">{t.registration.step6.labels.email}</p>
-                  <p>{formData.email}</p>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">{t.registration.step6.labels.country}</p>
-                    <p>{formData.country}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">{t.registration.step6.labels.language}</p>
-                    <p>{formData.language}</p>
-                  </div>
-                </div>
-                {formData.allergies.length > 0 && (
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-2">{t.registration.step6.labels.allergies}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {formData.allergies.map((allergen) => (
-                        <Badge key={allergen} className="bg-[#22C55E]">
-                          {allergen}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {formData.preferences.length > 0 && (
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-2">{t.registration.step6.labels.preferences}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {formData.preferences.map((pref) => (
-                        <Badge key={pref} className="bg-[#22C55E]">
-                          {pref}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {formData.goals.length > 0 && (
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-2">{t.registration.step6.labels.goals}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {formData.goals.map((goal) => (
-                        <Badge key={goal} className="bg-[#22C55E]">
-                          {goal}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
+              <div className="grid grid-cols-1 gap-3">
+                {skinTypes.map((type, i) => {
+                  const typeValue = typeof type === 'string' ? type : type.value;
+                  const Icon = getIcon(typeValue);
+                  const isSelected = formData.skinType === typeValue;
+                  return (
+                    <motion.button
+                      key={typeValue}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.08 }}
+                      onClick={() => setFormData({ ...formData, skinType: typeValue })}
+                      className={`p-4 rounded-2xl border-2 flex items-center gap-4 transition-all ${isSelected
+                        ? 'bg-[#9333EA] border-[#9333EA] text-white shadow-lg'
+                        : 'bg-white border-gray-200 hover:border-[#9333EA]/50'
+                        }`}
+                    >
+                      <div className={`p-2 rounded-full ${isSelected ? 'bg-white/20' : 'bg-[#9333EA]/10'}`}>
+                        <Icon className={`w-6 h-6 ${isSelected ? 'text-white' : 'text-[#9333EA]'}`} />
+                      </div>
+                      <span className="font-medium text-lg">{getSkinTypeLabel(typeValue)}</span>
+                      {isSelected && (
+                        <div className="ml-auto bg-white rounded-full p-1">
+                          <div className="w-3 h-3 bg-[#9333EA] rounded-full" />
+                        </div>
+                      )}
+                    </motion.button>
+                  );
+                })}
               </div>
-            </div>
+            </motion.div>
+          )}
+
+          {/* STEP 7: SKIN CONCERNS */}
+          {step === 7 && (
+            <SelectionStep
+              title={t.registration.step7.title}
+              subtitle={t.registration.step7.subtitle}
+              items={t.lists.skinConcerns}
+              selected={formData.skinConcerns}
+              onToggle={(i: string) => toggleSelection('skinConcerns', i)}
+              color="#F97316"
+              getIcon={getIcon}
+            />
+          )}
+
+          {/* STEP 8: REVIEW */}
+          {step === 8 && (
+            <motion.div
+              className="space-y-6"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+            >
+              <div className="text-center">
+                <h2 className="text-2xl font-bold mb-2">{t.registration.step8.title}</h2>
+                <p className="text-muted-foreground">{t.registration.step8.subtitle}</p>
+              </div>
+              <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm space-y-4">
+                <SummaryRow
+                  label={t.registration.step8.labels.name}
+                  value={formData.name}
+                />
+                <SummaryRow
+                  label={t.registration.step8.labels.food}
+                  value={`${formData.allergies.length + formData.preferences.length} ${t.registration.step8.labels.filters}`}
+                />
+                <SummaryRow
+                  label={t.registration.step8.labels.skin}
+                  value={`${getSkinTypeLabel(formData.skinType) || '-'} + ${formData.skinConcerns.length} ${t.registration.step8.labels.goals}`}
+                />
+              </div>
+            </motion.div>
           )}
         </div>
       </div>
@@ -326,30 +356,86 @@ export function RegistrationScreen({ onComplete }: RegistrationScreenProps) {
       {/* Footer */}
       <div className="bg-white border-t border-gray-200 p-6 pb-8">
         <div className="max-w-md mx-auto">
-          {step < 6 ? (
-            <Button
-              onClick={() => setStep(step + 1)}
-              disabled={step !== 2 && !canProceed()}
-              className="w-full h-14 bg-[#22C55E] text-white hover:bg-[#22C55E]/90 rounded-2xl shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {t.registration.continue}
-              <ChevronRight className="w-5 h-5 ml-2" />
-            </Button>
-          ) : (
-            <Button
-              onClick={() => {
-                StorageService.saveUserProfile(formData);
-                StorageService.clearScanHistory(); // Ensure fresh start for new user
-                clearAnalysisCache(); // Clear AI cache for new user profile
-                onComplete();
-              }}
-              className="w-full h-14 bg-[#22C55E] text-white hover:bg-[#22C55E]/90 rounded-2xl shadow-md"
-            >
-              {t.registration.step6.complete}
-            </Button>
-          )}
+          <Button
+            onClick={step < totalSteps ? () => setStep(step + 1) : handleComplete}
+            disabled={!canProceed()}
+            className="w-full h-14 bg-[#22C55E] text-white hover:bg-[#22C55E]/90 rounded-2xl shadow-md text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {step < totalSteps ? (t.registration.continue || 'Continue') : (t.registration.finish || 'Finish')}
+            {step < totalSteps && <ChevronRight className="w-5 h-5 ml-2" />}
+          </Button>
         </div>
       </div>
+    </div>
+  );
+}
+
+// === HELPER COMPONENTS ===
+
+interface SelectionStepProps {
+  title: string;
+  subtitle: string;
+  items: string[];
+  selected: string[];
+  onToggle: (item: string) => void;
+  color: string;
+  getIcon: (name: string) => any;
+}
+
+function SelectionStep({ title, subtitle, items, selected, onToggle, color, getIcon }: SelectionStepProps) {
+  return (
+    <motion.div
+      className="space-y-5"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+    >
+      <div>
+        <h2 className="text-2xl font-bold">{title}</h2>
+        <p className="text-sm text-muted-foreground">{subtitle}</p>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        {items.map((item, index) => {
+          const Icon = getIcon(item);
+          const isSelected = selected.includes(item);
+          return (
+            <motion.button
+              key={item}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: index * 0.03 }}
+              onClick={() => onToggle(item)}
+              className="relative p-4 rounded-2xl border-2 transition-all h-28 flex flex-col items-center justify-center gap-2"
+              style={{
+                backgroundColor: isSelected ? color : 'white',
+                borderColor: isSelected ? color : '#e5e7eb',
+                color: isSelected ? 'white' : undefined
+              }}
+            >
+              <Icon
+                className="w-7 h-7"
+                style={{ color: isSelected ? 'white' : color }}
+              />
+              <span className="text-xs font-medium text-center leading-tight">{item}</span>
+              {isSelected && (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="absolute top-2 right-2 w-2 h-2 bg-white rounded-full"
+                />
+              )}
+            </motion.button>
+          );
+        })}
+      </div>
+    </motion.div>
+  );
+}
+
+function SummaryRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between items-center py-3 border-b border-gray-100 last:border-0">
+      <span className="text-gray-500 text-sm">{label}</span>
+      <span className="font-semibold text-gray-900">{value}</span>
     </div>
   );
 }

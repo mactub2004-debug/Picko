@@ -68,54 +68,68 @@ export const translations = {
             ]
         },
         registration: {
+            header: {
+                title: 'Creá tu perfil',
+                step: 'Paso'
+            },
+            continue: 'Continuar',
+            finish: 'Finalizar',
             step1: {
-                title: 'Sobre ti',
-                subtitle: 'Vamos a conocerte mejor',
+                title: 'Sobre vos',
+                subtitle: 'Para conocerte mejor',
                 nameLabel: 'Nombre completo',
-                namePlaceholder: 'Ingresa tu nombre',
-                emailLabel: 'Correo electrónico',
+                namePlaceholder: 'Ingresá tu nombre',
+                emailLabel: 'Email',
                 emailPlaceholder: 'tu@email.com',
-                countryLabel: 'País *',
-                countryPlaceholder: 'Selecciona tu país',
-                languageLabel: 'Idioma *',
-                languagePlaceholder: 'Selecciona tu idioma'
+                countryLabel: 'País',
+                countryPlaceholder: 'Seleccioná tu país',
+                languageLabel: 'Idioma',
+                languagePlaceholder: 'Seleccioná tu idioma'
             },
             step2: {
-                title: 'Vamos a personalizar tu filtro de nutrición para satisfacer tus necesidades específicas'
+                title: 'Ahora configuremos tus preferencias para darte mejores recomendaciones.'
             },
             step3: {
-                title: 'Selecciona tus alergias',
-                subtitle: 'Verificaremos los productos contra estos alérgenos',
-                skip: 'Puedes saltar esto si no tienes alergias'
+                title: '¿Tenés alergias?',
+                subtitle: 'Te avisaremos si un producto es peligroso para vos.',
+                skip: 'No tengo alergias'
             },
             step4: {
-                title: 'Preferencias dietéticas',
-                subtitle: 'Elige lo que te importa',
-                optional: 'Opcional - nos ayuda a recomendar mejores productos'
+                title: 'Preferencias alimentarias',
+                subtitle: 'Elegí lo que te importa.',
+                optional: 'Opcional'
             },
             step5: {
                 title: 'Objetivos de salud',
-                subtitle: '¿En qué estás trabajando? (Selecciona hasta dos)',
-                optional: 'Opcional - ayuda a personalizar tu experiencia'
+                subtitle: '¿Qué querés lograr hoy?',
+                optional: 'Opcional'
             },
             step6: {
+                title: 'Tu tipo de piel',
+                subtitle: 'Clave para analizar cosméticos y cremas.',
+                options: {
+                    Dry: 'Seca',
+                    Oily: 'Grasa',
+                    Combination: 'Mixta',
+                    Normal: 'Normal',
+                    Sensitive: 'Sensible'
+                }
+            },
+            step7: {
+                title: 'Preocupaciones de piel',
+                subtitle: '¿Qué querés tratar o mejorar?',
+                optional: 'Opcional'
+            },
+            step8: {
                 title: '¡Todo listo! 🎉',
-                subtitle: 'Revisa los detalles de tu perfil',
+                subtitle: 'Tu perfil 360° está configurado.',
                 labels: {
                     name: 'Nombre',
-                    email: 'Correo',
-                    country: 'País',
-                    language: 'Idioma',
-                    allergies: 'Alergias',
-                    preferences: 'Preferencias',
-                    goals: 'Objetivos'
-                },
-                complete: 'Finalizar configuración'
-            },
-            continue: 'Continuar',
-            header: {
-                title: 'Crea tu perfil',
-                step: 'Paso'
+                    food: 'Alimentación',
+                    skin: 'Piel',
+                    filters: 'filtros',
+                    goals: 'objetivos'
+                }
             }
         },
         lists: {
@@ -130,6 +144,10 @@ export const translations = {
             healthGoals: [
                 'Perder peso', 'Ganar músculo', 'Mantener peso', 'Mejorar energía',
                 'Mejor digestión', 'Salud del corazón', 'Controlar diabetes', 'Reducir colesterol'
+            ],
+            skinConcerns: [
+                'Acné', 'Envejecimiento', 'Manchas', 'Poros',
+                'Sensibilidad', 'Sequedad', 'Grasa excesiva', 'Rojeces'
             ]
         },
         home: {
@@ -506,54 +524,68 @@ export const translations = {
             ]
         },
         registration: {
+            header: {
+                title: 'Create Profile',
+                step: 'Step'
+            },
+            continue: 'Continue',
+            finish: 'Finish',
             step1: {
                 title: 'About you',
-                subtitle: 'Let\'s get to know you better',
-                nameLabel: 'Full name',
+                subtitle: 'Let\'s get to know you',
+                nameLabel: 'Full Name',
                 namePlaceholder: 'Enter your name',
                 emailLabel: 'Email',
                 emailPlaceholder: 'your@email.com',
-                countryLabel: 'Country *',
-                countryPlaceholder: 'Select your country',
-                languageLabel: 'Language *',
-                languagePlaceholder: 'Select your language'
+                countryLabel: 'Country',
+                countryPlaceholder: 'Select country',
+                languageLabel: 'Language',
+                languagePlaceholder: 'Select language'
             },
             step2: {
-                title: 'Let\'s customize your nutrition filter to meet your specific needs'
+                title: 'Now let\'s set up your preferences for better recommendations.'
             },
             step3: {
-                title: 'Select your allergies',
-                subtitle: 'We will check products against these allergens',
-                skip: 'You can skip this if you don\'t have allergies'
+                title: 'Any allergies?',
+                subtitle: 'We\'ll warn you if a product is unsafe.',
+                skip: 'No allergies'
             },
             step4: {
                 title: 'Dietary preferences',
-                subtitle: 'Choose what matters to you',
-                optional: 'Optional - helps us recommend better products'
+                subtitle: 'Choose what matters to you.',
+                optional: 'Optional'
             },
             step5: {
                 title: 'Health goals',
-                subtitle: 'What are you working on? (Select up to two)',
-                optional: 'Optional - helps customize your experience'
+                subtitle: 'What are you working towards?',
+                optional: 'Optional'
             },
             step6: {
+                title: 'Your Skin Type',
+                subtitle: 'Key for analyzing cosmetics.',
+                options: {
+                    Dry: 'Dry',
+                    Oily: 'Oily',
+                    Combination: 'Combination',
+                    Normal: 'Normal',
+                    Sensitive: 'Sensitive'
+                }
+            },
+            step7: {
+                title: 'Skin Concerns',
+                subtitle: 'What do you want to treat?',
+                optional: 'Optional'
+            },
+            step8: {
                 title: 'All set! 🎉',
-                subtitle: 'Review your profile details',
+                subtitle: 'Your 360° profile is ready.',
                 labels: {
                     name: 'Name',
-                    email: 'Email',
-                    country: 'Country',
-                    language: 'Language',
-                    allergies: 'Allergies',
-                    preferences: 'Preferences',
-                    goals: 'Goals'
-                },
-                complete: 'Complete setup'
-            },
-            continue: 'Continue',
-            header: {
-                title: 'Create your profile',
-                step: 'Step'
+                    food: 'Food',
+                    skin: 'Skin',
+                    filters: 'filters',
+                    goals: 'goals'
+                }
             }
         },
         lists: {
@@ -568,6 +600,10 @@ export const translations = {
             healthGoals: [
                 'Lose Weight', 'Build Muscle', 'Maintain Weight', 'Improve Energy',
                 'Better Digestion', 'Heart Health', 'Manage Diabetes', 'Reduce Cholesterol'
+            ],
+            skinConcerns: [
+                'Acne', 'Aging', 'Dark Spots', 'Pores',
+                'Sensitivity', 'Dryness', 'Oiliness', 'Redness'
             ]
         },
         home: {

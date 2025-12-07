@@ -51,19 +51,19 @@ export const translations = {
         onboarding: {
             skip: 'Saltar',
             next: 'Siguiente',
-            getStarted: 'Comenzar',
+            getStarted: 'Empezar ahora',
             slides: [
                 {
-                    title: 'Escanea cualquier producto',
-                    description: 'Simplemente escanea el código de barras o toma una foto de cualquier producto alimenticio para obtener información nutricional instantánea y alertas de seguridad.'
+                    title: 'Tu filtro personal',
+                    description: 'Analiza cualquier producto antes de llevarlo a casa.'
                 },
                 {
-                    title: 'Mantente seguro',
-                    description: 'Verificamos los ingredientes contra tus alergias y preferencias dietéticas para mantenerte protegido y saludable.'
+                    title: 'Transparencia total',
+                    description: 'Revelamos lo que las etiquetas esconden o disfrazan.'
                 },
                 {
-                    title: 'Recomendaciones inteligentes',
-                    description: 'Obtén sugerencias de productos personalizadas basadas en tus objetivos de salud y preferencias dietéticas.'
+                    title: 'Tu mejor versión',
+                    description: 'Encontrá productos que realmente coinciden con tus metas.'
                 }
             ]
         },
@@ -134,11 +134,11 @@ export const translations = {
         },
         lists: {
             allergens: [
-                'Gluten', 'Leche', 'Huevos', 'Pescado', 'Crustáceos',
-                'Nueces', 'Maní', 'Trigo', 'Soja', 'Sésamo'
+                'Gluten', 'Lácteos', 'Huevos', 'Pescado',
+                'Nueces', 'Maní', 'Soja', 'Sésamo'
             ],
             dietaryPreferences: [
-                'Vegano', 'Vegetariano', 'Sin gluten', 'Sin lácteos', 'Orgánico',
+                'Vegano', 'Vegetariano', 'Orgánico',
                 'Bajo en azúcar', 'Bajo en sodio', 'Alto en proteína', 'Keto', 'Paleo'
             ],
             healthGoals: [
@@ -167,8 +167,16 @@ export const translations = {
             community: 'Comunidad',
             topRated: 'Mejor valorados',
             recommended: 'Recomendado para ti',
-            dailyTip: 'Consejo diario',
-            tipContent: '¿Leyendo etiquetas nutricionales? Concéntrate primero en el tamaño de la porción para calcular con precisión tu ingesta.',
+            dailyTip: 'Consejo del día',
+            tips: [
+                '¿Leyendo etiquetas? Concéntrate primero en el tamaño de la porción.',
+                'Los ingredientes se ordenan por cantidad: el primero es el que más tiene.',
+                'Ojo con el "Sin Azúcar": puede tener edulcorantes que no buscás.',
+                'Si tiene más de 5 ingredientes que no podés pronunciar, pensalo dos veces.',
+                'Comer colores variados asegura una ingesta amplia de vitaminas.',
+                'No vayas al súper con hambre, vas a comprar más procesados.',
+                'Lavar las frutas y verduras reduce residuos, pero no los elimina todos.'
+            ],
             emptyState: {
                 title: '¡Haz tu primer escaneo!',
                 description: 'Comienza a construir tu historial nutricional escaneando productos y marcando los que has comprado.'
@@ -455,6 +463,44 @@ export const translations = {
                 food: '🛒',
                 cosmetic: '🛁'
             }
+        },
+        // COMPARACIÓN DE PRODUCTOS
+        comparison: {
+            title: 'Comparar Productos',
+            subtitle: 'Comparando {count} productos',
+            addProduct: 'Agregar producto',
+            selectFromHistory: 'Seleccionar del historial',
+            scanNew: 'Escanear nuevo',
+            nutritionScore: 'Puntuación Nutricional',
+            suitabilityStatus: 'Estado de Adecuación',
+            allergens: 'Alérgenos',
+            benefitsConcerns: 'Beneficios y Preocupaciones',
+            none: 'Ninguno',
+            bestChoice: 'Mejor Opción',
+            bestChoiceText: 'Según tu perfil, {product} es la mejor opción para vos.',
+            viewBest: 'Ver Mejor Producto',
+            backToResults: 'Volver a Resultados',
+            status: {
+                suitable: 'Adecuado',
+                questionable: 'Cuestionable',
+                notRecommended: 'No Recomendado',
+                unknown: 'Desconocido'
+            }
+        },
+        // CÁMARA Y ESCANEO
+        camera: {
+            scanBarcode: 'Escanear Código',
+            barcode: 'Código de Barras',
+            photo: 'Foto',
+            analyzing: 'Analizando...',
+            analyzingProduct: 'Analizando producto...',
+            aiAnalyzing: 'Analizando con IA...',
+            aiEvaluating: 'Evaluando el producto para ti',
+            tryAgain: 'Intenta de nuevo',
+            productNotFound: 'Producto no encontrado',
+            scanError: 'Error al escanear',
+            permissionDenied: 'Permiso de cámara denegado',
+            selectProductType: '¿Qué estás escaneando?'
         }
     },
     EN: {
@@ -510,16 +556,16 @@ export const translations = {
             getStarted: 'Get Started',
             slides: [
                 {
-                    title: 'Scan any product',
-                    description: 'Simply scan the barcode or take a photo of any food product to get instant nutritional information and safety alerts.'
+                    title: 'Your Personal Filter',
+                    description: 'Analyze any product before taking it home.'
                 },
                 {
-                    title: 'Stay safe',
-                    description: 'We check ingredients against your allergies and dietary preferences to keep you protected and healthy.'
+                    title: 'Total Transparency',
+                    description: 'We reveal what labels hide or disguise.'
                 },
                 {
-                    title: 'Smart recommendations',
-                    description: 'Get personalized product suggestions based on your health goals and dietary preferences.'
+                    title: 'Your Best Self',
+                    description: 'Find products that truly match your goals.'
                 }
             ]
         },
@@ -590,11 +636,11 @@ export const translations = {
         },
         lists: {
             allergens: [
-                'Gluten', 'Milk', 'Eggs', 'Fish', 'Crustaceans',
-                'Nuts', 'Peanuts', 'Wheat', 'Soy', 'Sesame'
+                'Gluten', 'Dairy', 'Eggs', 'Fish',
+                'Nuts', 'Peanuts', 'Soy', 'Sesame'
             ],
             dietaryPreferences: [
-                'Vegan', 'Vegetarian', 'Gluten Free', 'Dairy Free', 'Organic',
+                'Vegan', 'Vegetarian', 'Organic',
                 'Low Sugar', 'Low Sodium', 'High Protein', 'Keto', 'Paleo'
             ],
             healthGoals: [
@@ -623,8 +669,16 @@ export const translations = {
             community: 'Community',
             topRated: 'Top rated',
             recommended: 'Recommended for you',
-            dailyTip: 'Daily tip',
-            tipContent: 'Reading nutrition labels? Focus on serving size first to accurately calculate your intake.',
+            dailyTip: 'Daily Tip',
+            tips: [
+                'Reading labels? Focus on serving size first.',
+                'Ingredients are listed by quantity: the first one is the main one.',
+                'Watch out for "Sugar Free": it might have sweeteners you avoid.',
+                'If it has more than 5 unpronounceable ingredients, think twice.',
+                'Eating varied colors ensures a wide range of vitamins.',
+                'Don\'t shop while hungry, you\'ll buy more processed foods.',
+                'Washing fruits and veggies reduces residues but doesn\'t remove them all.'
+            ],
             emptyState: {
                 title: 'Make your first scan!',
                 description: 'Start building your nutritional history by scanning products and marking the ones you bought.'
@@ -911,6 +965,44 @@ export const translations = {
                 food: '🛒',
                 cosmetic: '🛁'
             }
+        },
+        // PRODUCT COMPARISON
+        comparison: {
+            title: 'Compare Products',
+            subtitle: 'Comparing {count} products',
+            addProduct: 'Add product',
+            selectFromHistory: 'Select from history',
+            scanNew: 'Scan New',
+            nutritionScore: 'Nutrition Score',
+            suitabilityStatus: 'Suitability Status',
+            allergens: 'Allergens',
+            benefitsConcerns: 'Benefits & Concerns',
+            none: 'None',
+            bestChoice: 'Best Choice',
+            bestChoiceText: 'Based on your profile, {product} is the best option for you.',
+            viewBest: 'View Best Product',
+            backToResults: 'Back to Results',
+            status: {
+                suitable: 'Suitable',
+                questionable: 'Questionable',
+                notRecommended: 'Not Recommended',
+                unknown: 'Unknown'
+            }
+        },
+        // CAMERA & SCANNING
+        camera: {
+            scanBarcode: 'Scan Barcode',
+            barcode: 'Barcode',
+            photo: 'Photo',
+            analyzing: 'Analyzing...',
+            analyzingProduct: 'Analyzing product...',
+            aiAnalyzing: 'Analyzing with AI...',
+            aiEvaluating: 'Evaluating the product for you',
+            tryAgain: 'Try again',
+            productNotFound: 'Product not found',
+            scanError: 'Scan error',
+            permissionDenied: 'Camera permission denied',
+            selectProductType: 'What are you scanning?'
         }
     }
 };

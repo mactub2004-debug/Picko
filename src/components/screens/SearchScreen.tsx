@@ -70,6 +70,27 @@ export function SearchScreen({ onNavigate }: SearchScreenProps) {
     setSelectedCategory(null);
   };
 
+  // Helper: Check if a product was actually scanned (exists in history with nutritionScore)
+  const wasProductScanned = (productId: string): boolean => {
+    const historyItem = scanHistory.find((item: any) => item.product.id === productId);
+    return historyItem !== undefined && (historyItem.product.nutritionScore !== undefined || historyItem.product.status !== undefined);
+  };
+
+  // Helper: Clean product for display - only show score/status if scanned
+  const cleanProductForDisplay = (product: any): any => {
+    if (wasProductScanned(product.id)) {
+      return product; // Keep original data
+    }
+    // Remove score and status for non-scanned products
+    return {
+      ...product,
+      nutritionScore: undefined,
+      score: undefined,
+      status: undefined,
+      verdict: undefined
+    };
+  };
+
   const handleProductClick = async (product: any) => {
     setIsAnalyzing(product.id);
 
@@ -210,7 +231,7 @@ export function SearchScreen({ onNavigate }: SearchScreenProps) {
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
                   <ProductCard
-                    product={product}
+                    product={cleanProductForDisplay(product)}
                     onClick={() => handleProductClick(product)}
                   />
                   {isAnalyzing === product.id && (

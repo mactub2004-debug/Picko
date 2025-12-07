@@ -18,6 +18,7 @@ export function HomeScreen({ onNavigate }: HomeScreenProps) {
   const [isAnalyzing, setIsAnalyzing] = useState<string | null>(null);
   const [recommendedProducts, setRecommendedProducts] = useState<any[]>([]);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [currentTip, setCurrentTip] = useState('');
 
   // Reload data when component mounts or refreshKey changes
   useEffect(() => {
@@ -35,6 +36,15 @@ export function HomeScreen({ onNavigate }: HomeScreenProps) {
     console.log('🏠 HomeScreen: Loaded', freshRecommended.length, 'recommended products');
   }, [refreshKey]);
 
+  // Select random tip on mount or language change
+  useEffect(() => {
+    const tips = (t.home as any).tips;
+    if (tips && tips.length > 0) {
+      const randomIndex = Math.floor(Math.random() * tips.length);
+      setCurrentTip(tips[randomIndex]);
+    }
+  }, [language, t]);
+
   // Force refresh when screen becomes visible
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -51,6 +61,28 @@ export function HomeScreen({ onNavigate }: HomeScreenProps) {
   const averageScore = scanCount > 0
     ? Math.round(scanHistory.reduce((acc, item) => acc + (item.product.nutritionScore || 0), 0) / scanCount)
     : 0;
+
+  // Helper: Check if a product was actually scanned (exists in history with nutritionScore)
+  const wasProductScanned = (productId: string): boolean => {
+    const historyItem = scanHistory.find(item => item.product.id === productId);
+    return historyItem !== undefined && (historyItem.product.nutritionScore !== undefined || historyItem.product.status !== undefined);
+  };
+
+  // Helper: Get display score - only show real score if product was scanned
+  const getDisplayScore = (product: any): string | number => {
+    if (wasProductScanned(product.id)) {
+      return product.nutritionScore ?? product.score ?? '?';
+    }
+    return '?'; // Not scanned yet
+  };
+
+  // Helper: Get display status - only show real status if product was scanned
+  const getDisplayStatus = (product: any): string | undefined => {
+    if (wasProductScanned(product.id)) {
+      return product.status;
+    }
+    return undefined; // Will show "unknown"
+  };
 
   const getStatusConfig = (status?: string) => {
     switch (status) {
@@ -201,7 +233,11 @@ export function HomeScreen({ onNavigate }: HomeScreenProps) {
 
           <div className="flex gap-3 overflow-x-auto pb-2 px-6 scrollbar-hide">
             {recommendedProducts.map((product) => {
-              const statusConfig = getStatusConfig(product.status);
+              const displayStatus = getDisplayStatus(product);
+              const displayScore = getDisplayScore(product);
+              const statusConfig = getStatusConfig(displayStatus);
+              const scoreValue = typeof displayScore === 'number' ? displayScore : 0;
+
               return (
                 <div
                   key={product.id}
@@ -233,10 +269,10 @@ export function HomeScreen({ onNavigate }: HomeScreenProps) {
                       <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
                         <div
                           className="h-full bg-[#22C55E] rounded-full transition-all"
-                          style={{ width: `${product.nutritionScore || 0}%` }}
+                          style={{ width: `${scoreValue}%` }}
                         />
                       </div>
-                      <span className="text-xs min-w-[2rem] text-right">{product.nutritionScore || '?'}</span>
+                      <span className="text-xs min-w-[2rem] text-right">{displayScore}</span>
                     </div>
                   </div>
 
@@ -263,9 +299,9 @@ export function HomeScreen({ onNavigate }: HomeScreenProps) {
                 <Lightbulb className="w-7 h-7 text-[#F97316]" />
               </div>
               <div className="flex-1">
-                <p className="mb-2">{t.home.dailyTip}</p>
+                <p className="mb-2 font-medium text-[#F97316]">{t.home.dailyTip}</p>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  {t.home.tipContent}
+                  {currentTip}
                 </p>
               </div>
             </div>

@@ -77,7 +77,7 @@ export function CameraScreen({ onNavigate, onClose, context }: CameraScreenProps
     const product = findProductByBarcode(barcode);
 
     if (!product) {
-      setError(`Producto no encontrado (código: ${barcode})`);
+      setError(`${t.camera.productNotFound} (${barcode})`);
       setIsAnalyzing(false);
 
       scanTimeoutRef.current = setTimeout(() => {
@@ -150,6 +150,40 @@ export function CameraScreen({ onNavigate, onClose, context }: CameraScreenProps
     setIsScanning(false);
   };
 
+  // Helper function to get scan instruction text
+  const getScanInstructionText = () => {
+    if (isAnalyzing) {
+      return t.camera.analyzingProduct;
+    }
+    if (error) {
+      return t.camera.tryAgain;
+    }
+    if (scanMode === 'barcode') {
+      return language === 'ES'
+        ? 'Posiciona el código de barras dentro del marco'
+        : 'Position the barcode inside the frame';
+    }
+    return language === 'ES'
+      ? 'Centra la etiqueta del producto'
+      : 'Center the product label';
+  };
+
+  // Helper for status text at bottom
+  const getStatusText = () => {
+    if (isAnalyzing) {
+      return language === 'ES' ? 'Procesando...' : 'Processing...';
+    }
+    if (isScanning) {
+      const typeLabel = productType === 'FOOD'
+        ? (t.productType?.selector?.food || 'food')
+        : (t.productType?.selector?.cosmetic || 'cosmetic');
+      return language === 'ES'
+        ? `Escaneando ${typeLabel.toLowerCase()}...`
+        : `Scanning ${typeLabel.toLowerCase()}...`;
+    }
+    return language === 'ES' ? 'Listo para escanear' : 'Ready to scan';
+  };
+
   return (
     <div className="fixed inset-0 bg-black z-50 flex flex-col">
       <div className="flex-1 relative">
@@ -165,7 +199,7 @@ export function CameraScreen({ onNavigate, onClose, context }: CameraScreenProps
           <div className="absolute inset-0 bg-gradient-to-br from-gray-800/50 to-gray-900/50 flex items-center justify-center">
             <div className="text-white/30 text-center">
               <Camera className="w-20 h-20 mx-auto mb-4" />
-              <p>Photo mode - Coming soon</p>
+              <p>{language === 'ES' ? 'Modo foto - Próximamente' : 'Photo mode - Coming soon'}</p>
             </div>
           </div>
         )}
@@ -182,7 +216,7 @@ export function CameraScreen({ onNavigate, onClose, context }: CameraScreenProps
                 <div className="bg-black/70 backdrop-blur-md rounded-2xl px-6 py-4">
                   <div className="flex items-center gap-3">
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    <p className="text-white font-semibold">Analizando...</p>
+                    <p className="text-white font-semibold">{t.camera.analyzing}</p>
                   </div>
                 </div>
               </div>
@@ -212,13 +246,7 @@ export function CameraScreen({ onNavigate, onClose, context }: CameraScreenProps
 
             <div className="absolute -bottom-16 left-0 right-0 text-center px-4">
               <p className="text-white text-sm drop-shadow-lg">
-                {isAnalyzing
-                  ? 'Analizando producto...'
-                  : error
-                    ? 'Intenta de nuevo'
-                    : scanMode === 'barcode'
-                      ? 'Posiciona el código de barras dentro del marco'
-                      : 'Centra la etiqueta del producto'}
+                {getScanInstructionText()}
               </p>
             </div>
           </div>
@@ -237,25 +265,25 @@ export function CameraScreen({ onNavigate, onClose, context }: CameraScreenProps
             <button
               onClick={() => setProductType('FOOD')}
               className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all ${productType === 'FOOD'
-                  ? 'bg-[#22C55E] text-white'
-                  : 'text-white/60 hover:text-white'
+                ? 'bg-[#22C55E] text-white'
+                : 'text-white/60 hover:text-white'
                 }`}
             >
               <Apple className="w-4 h-4" />
               <span className="text-sm font-medium">
-                {(t as any).productType?.selector?.food || 'Alimento'}
+                {t.productType?.selector?.food || (language === 'ES' ? 'Alimento' : 'Food')}
               </span>
             </button>
             <button
               onClick={() => setProductType('COSMETIC')}
               className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all ${productType === 'COSMETIC'
-                  ? 'bg-[#A855F7] text-white'
-                  : 'text-white/60 hover:text-white'
+                ? 'bg-[#A855F7] text-white'
+                : 'text-white/60 hover:text-white'
                 }`}
             >
               <Sparkles className="w-4 h-4" />
               <span className="text-sm font-medium">
-                {(t as any).productType?.selector?.cosmetic || 'Cosmético'}
+                {t.productType?.selector?.cosmetic || (language === 'ES' ? 'Cosmético' : 'Cosmetic')}
               </span>
             </button>
           </div>
@@ -283,7 +311,7 @@ export function CameraScreen({ onNavigate, onClose, context }: CameraScreenProps
                 }`}
             >
               <ScanBarcode className={`w-6 h-6 ${scanMode === 'barcode' ? 'stroke-[2.5]' : ''}`} />
-              <span className="text-xs">Código de Barras</span>
+              <span className="text-xs">{t.camera.barcode}</span>
             </button>
             <button
               onClick={() => setScanMode('camera')}
@@ -293,16 +321,12 @@ export function CameraScreen({ onNavigate, onClose, context }: CameraScreenProps
                 }`}
             >
               <Camera className={`w-6 h-6 ${scanMode === 'camera' ? 'stroke-[2.5]' : ''}`} />
-              <span className="text-xs">Foto</span>
+              <span className="text-xs">{t.camera.photo}</span>
             </button>
           </div>
 
           <p className="text-white/70 text-center text-sm mt-4">
-            {isAnalyzing
-              ? 'Procesando...'
-              : isScanning
-                ? `Escaneando ${productType === 'FOOD' ? 'alimento' : 'cosmético'}...`
-                : 'Listo para escanear'}
+            {getStatusText()}
           </p>
         </div>
 
@@ -316,4 +340,3 @@ export function CameraScreen({ onNavigate, onClose, context }: CameraScreenProps
     </div>
   );
 }
-

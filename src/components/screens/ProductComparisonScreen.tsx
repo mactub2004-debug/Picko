@@ -3,6 +3,7 @@ import { Product } from '../../lib/demo-data';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface ProductComparisonScreenProps {
   products: Product[];
@@ -12,6 +13,8 @@ interface ProductComparisonScreenProps {
 }
 
 export function ProductComparisonScreen({ products, onNavigate, onBack, onAddProduct }: ProductComparisonScreenProps) {
+  const { t } = useLanguage();
+
   const getStatusConfig = (status: Product['status']) => {
     switch (status) {
       case 'suitable':
@@ -19,37 +22,35 @@ export function ProductComparisonScreen({ products, onNavigate, onBack, onAddPro
           icon: CheckCircle2,
           color: 'text-[#22C55E]',
           bg: 'bg-[#22C55E]',
-          label: 'Suitable'
+          label: t.comparison.status.suitable
         };
       case 'questionable':
         return {
           icon: AlertTriangle,
           color: 'text-[#F97316]',
           bg: 'bg-[#F97316]',
-          label: 'Questionable'
+          label: t.comparison.status.questionable
         };
       case 'not-recommended':
         return {
           icon: XCircle,
           color: 'text-[#EF4444]',
           bg: 'bg-[#EF4444]',
-          label: 'Not Recommended'
+          label: t.comparison.status.notRecommended
         };
       default:
         return {
           icon: AlertTriangle,
           color: 'text-gray-500',
           bg: 'bg-gray-500',
-          label: 'Unknown'
+          label: t.comparison.status.unknown
         };
     }
   };
 
-  const comparisonMetrics = [
-    { label: 'Nutrition Score', key: 'nutritionScore' as const },
-    { label: 'Allergens', key: 'allergens' as const },
-    { label: 'Ingredients', key: 'ingredients' as const }
-  ];
+  // Get best product name for the recommendation text
+  const bestProduct = [...products].sort((a, b) => (b.nutritionScore || 0) - (a.nutritionScore || 0))[0];
+  const bestChoiceText = t.comparison.bestChoiceText.replace('{product}', bestProduct?.name || '');
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] pb-6">
@@ -63,10 +64,10 @@ export function ProductComparisonScreen({ products, onNavigate, onBack, onAddPro
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
-            <h1>Product Comparison</h1>
+            <h1>{t.comparison.title}</h1>
           </div>
           <p className="text-sm text-muted-foreground pl-12">
-            Compare {products.length} products side by side
+            {t.comparison.subtitle.replace('{count}', String(products.length))}
           </p>
         </div>
       </div>
@@ -112,7 +113,7 @@ export function ProductComparisonScreen({ products, onNavigate, onBack, onAddPro
                   <div className="w-8 h-8 rounded-full bg-[#22C55E]/10 flex items-center justify-center">
                     <Plus className="w-4 h-4 text-[#22C55E]" />
                   </div>
-                  <p className="text-xs text-muted-foreground">Select from History</p>
+                  <p className="text-xs text-muted-foreground">{t.comparison.selectFromHistory}</p>
                 </button>
               )}
 
@@ -123,7 +124,7 @@ export function ProductComparisonScreen({ products, onNavigate, onBack, onAddPro
                 <div className="w-8 h-8 rounded-full bg-[#22C55E]/10 flex items-center justify-center">
                   <Scan className="w-4 h-4 text-[#22C55E]" />
                 </div>
-                <p className="text-xs text-muted-foreground">Scan New</p>
+                <p className="text-xs text-muted-foreground">{t.comparison.scanNew}</p>
               </button>
             </div>
           )}
@@ -133,7 +134,7 @@ export function ProductComparisonScreen({ products, onNavigate, onBack, onAddPro
         <div className="mt-6 space-y-4">
           {/* Nutrition Score Comparison */}
           <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-            <h3 className="mb-4">Nutrition Score</h3>
+            <h3 className="mb-4">{t.comparison.nutritionScore}</h3>
             <div className="space-y-3">
               {products.map((product) => (
                 <div key={product.id} className="flex items-center gap-3">
@@ -157,7 +158,7 @@ export function ProductComparisonScreen({ products, onNavigate, onBack, onAddPro
 
           {/* Status Comparison */}
           <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-            <h3 className="mb-4">Suitability Status</h3>
+            <h3 className="mb-4">{t.comparison.suitabilityStatus}</h3>
             <div className="space-y-3">
               {products.map((product) => {
                 const statusConfig = getStatusConfig(product.status);
@@ -178,20 +179,20 @@ export function ProductComparisonScreen({ products, onNavigate, onBack, onAddPro
 
           {/* Allergens Comparison */}
           <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-            <h3 className="mb-4">Allergens</h3>
+            <h3 className="mb-4">{t.comparison.allergens}</h3>
             <div className="space-y-4">
               {products.map((product) => (
                 <div key={product.id}>
                   <p className="text-sm text-muted-foreground mb-2">{product.brand}</p>
                   <div className="flex flex-wrap gap-2">
-                    {product.allergens.length > 0 ? (
+                    {product.allergens && product.allergens.length > 0 ? (
                       product.allergens.map((allergen, idx) => (
                         <Badge key={idx} variant="destructive" className="bg-[#EF4444]">
                           {allergen}
                         </Badge>
                       ))
                     ) : (
-                      <span className="text-sm text-muted-foreground">None</span>
+                      <span className="text-sm text-muted-foreground">{t.comparison.none}</span>
                     )}
                   </div>
                 </div>
@@ -201,7 +202,7 @@ export function ProductComparisonScreen({ products, onNavigate, onBack, onAddPro
 
           {/* Benefits/Issues Comparison */}
           <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-            <h3 className="mb-4">Benefits & Concerns</h3>
+            <h3 className="mb-4">{t.comparison.benefitsConcerns}</h3>
             <div className="space-y-4">
               {products.map((product) => (
                 <div key={product.id} className="space-y-2">
@@ -241,11 +242,9 @@ export function ProductComparisonScreen({ products, onNavigate, onBack, onAddPro
                   <CheckCircle2 className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-[#22C55E] mb-1">Best Choice</h3>
+                  <h3 className="text-[#22C55E] mb-1">{t.comparison.bestChoice}</h3>
                   <p className="text-sm text-muted-foreground">
-                    Based on your profile, <span className="text-foreground">{
-                      [...products].sort((a, b) => (b.nutritionScore || 0) - (a.nutritionScore || 0))[0].name
-                    }</span> is the best option for you.
+                    {bestChoiceText}
                   </p>
                 </div>
               </div>
@@ -258,10 +257,10 @@ export function ProductComparisonScreen({ products, onNavigate, onBack, onAddPro
           <Button
             className="w-full h-14 bg-[#22C55E] text-white hover:bg-[#22C55E]/90 rounded-2xl shadow-md"
             onClick={() => onNavigate('scan-result', {
-              product: [...products].sort((a, b) => (b.nutritionScore || 0) - (a.nutritionScore || 0))[0]
+              product: bestProduct
             })}
           >
-            View Best Product
+            {t.comparison.viewBest}
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
           <Button
@@ -269,7 +268,7 @@ export function ProductComparisonScreen({ products, onNavigate, onBack, onAddPro
             className="w-full h-14 rounded-2xl"
             onClick={onBack}
           >
-            Back to Results
+            {t.comparison.backToResults}
           </Button>
         </div>
       </div>

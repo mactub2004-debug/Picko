@@ -25,6 +25,7 @@ export function ScanResultScreen({ product: initialProduct, onNavigate, onBack }
   const [isPurchased, setIsPurchased] = useState(false);
   const [currentHistoryId, setCurrentHistoryId] = useState<string | null>(null);
   const [showComparisonDialog, setShowComparisonDialog] = useState(false);
+  const [isAnalyzingComparison, setIsAnalyzingComparison] = useState(false);
 
   // Ingredient Sheet
   const userProfile = StorageService.getUserProfile();
@@ -190,8 +191,11 @@ export function ScanResultScreen({ product: initialProduct, onNavigate, onBack }
     .filter(p => p && p.id && p.id !== product.id && p.status === 'suitable' && p.category === product.category)
     .slice(0, 2);
 
-  const historyProducts = demoScanHistory
+  // Get history products filtering by SAME TYPE (Food with Food, Cosmetic with Cosmetic)
+  const realHistory = StorageService.getScanHistory();
+  const historyProducts = realHistory
     .filter(item => item && item.product && item.product.id && item.product.id !== product.id)
+    .filter(item => item.product.type === product.type) // Same type filter!
     .map(item => item.product)
     .slice(0, 5);
 
@@ -424,17 +428,58 @@ export function ScanResultScreen({ product: initialProduct, onNavigate, onBack }
       </div>
 
       <ComparisonDialog
-        open={showComparisonDialog}
-        onOpenChange={setShowComparisonDialog}
+        open={showComparisonDialog || isAnalyzingComparison}
+        onOpenChange={(open) => {
+          if (!isAnalyzingComparison) {
+            setShowComparisonDialog(open);
+          }
+        }}
         productName={product.name}
         historyProducts={historyProducts}
         onScanNew={() => {
           setShowComparisonDialog(false);
           onNavigate('camera');
         }}
-        onSelectProduct={(historyProduct) => {
-          setShowComparisonDialog(false);
-          onNavigate('comparison', { products: [product, historyProduct] });
+        onSelectProduct={async (historyProduct) => {
+          // Check if product was already analyzed (has nutritionScore from AI)
+          const wasAnalyzed = historyProduct.nutritionScore !== undefined && historyProduct.status !== undefined;
+
+          if (wasAnalyzed) {
+            // Already analyzed, navigate directly
+            setShowComparisonDialog(false);
+            onNavigate('comparison', { products: [product, historyProduct] });
+          } else {
+            // Need to analyze first
+            setIsAnalyzingComparison(true);
+            try {
+              const profile = StorageService.getUserProfile();
+              if (profile) {
+                const aiResult = await analyzeProductWithAI(historyProduct, profile, language);
+                const enrichedProduct = {
+                  ...historyProduct,
+                  status: aiResult.status,
+                  nutritionScore: aiResult.nutritionScore,
+                  benefits: aiResult.benefits,
+                  issues: aiResult.issues,
+                  aiDescription: aiResult.aiDescription
+                };
+                // Save to history
+                StorageService.addScanHistoryItem(enrichedProduct, false);
+                setShowComparisonDialog(false);
+                setIsAnalyzingComparison(false);
+                onNavigate('comparison', { products: [product, enrichedProduct] });
+              } else {
+                setShowComparisonDialog(false);
+                setIsAnalyzingComparison(false);
+                onNavigate('comparison', { products: [product, historyProduct] });
+              }
+            } catch (error) {
+              console.error('Error analyzing product for comparison:', error);
+              setShowComparisonDialog(false);
+              setIsAnalyzingComparison(false);
+              onNavigate('comparison', { products: [product, historyProduct] });
+            }
+          }
         }}
       />
 

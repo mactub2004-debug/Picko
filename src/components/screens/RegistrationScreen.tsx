@@ -90,11 +90,11 @@ export function RegistrationScreen({ onComplete }: RegistrationScreenProps) {
   const getIcon = (name: string) => {
     const icons: Record<string, any> = {
       // Allergens EN
-      'Gluten': Wheat, 'Milk': Milk, 'Eggs': Egg, 'Fish': Fish, 'Shellfish': Shell,
+      'Gluten': Wheat, 'Milk': Milk, 'Dairy': Milk, 'Eggs': Egg, 'Fish': Fish, 'Shellfish': Shell,
       'Crustaceans': Shell, 'Tree Nuts': Nut, 'Nuts': Nut, 'Peanuts': Nut, 'Wheat': Wheat,
       'Soy': Bean, 'Sesame': Cookie,
       // Allergens ES
-      'Leche': Milk, 'Huevos': Egg, 'Pescado': Fish, 'Crustáceos': Shell,
+      'Leche': Milk, 'Lácteos': Milk, 'Huevos': Egg, 'Pescado': Fish, 'Crustáceos': Shell,
       'Nueces': Nut, 'Maní': Nut, 'Trigo': Wheat, 'Soja': Bean, 'Sésamo': Cookie,
       // Preferences EN
       'Vegan': Leaf, 'Vegetarian': Carrot, 'Gluten Free': ShieldCheck, 'Gluten-free': ShieldCheck,
@@ -161,8 +161,8 @@ export function RegistrationScreen({ onComplete }: RegistrationScreenProps) {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="max-w-md mx-auto p-6">
+      <div className="flex-1 overflow-hidden">
+        <div className="max-w-md mx-auto px-6 py-4">
 
           {/* STEP 1: BASIC INFO */}
           {step === 1 && (
@@ -269,15 +269,15 @@ export function RegistrationScreen({ onComplete }: RegistrationScreenProps) {
           {/* STEP 6: SKIN TYPE */}
           {step === 6 && (
             <motion.div
-              className="space-y-5"
+              className="space-y-3"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
             >
               <div>
-                <h2 className="text-2xl font-bold">{t.registration.step6.title}</h2>
+                <h2 className="text-xl font-bold">{t.registration.step6.title}</h2>
                 <p className="text-sm text-muted-foreground">{t.registration.step6.subtitle}</p>
               </div>
-              <div className="grid grid-cols-1 gap-3">
+              <div className="grid grid-cols-1 gap-2">
                 {skinTypes.map((type, i) => {
                   const typeValue = typeof type === 'string' ? type : type.value;
                   const Icon = getIcon(typeValue);
@@ -287,20 +287,20 @@ export function RegistrationScreen({ onComplete }: RegistrationScreenProps) {
                       key={typeValue}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.08 }}
+                      transition={{ delay: i * 0.05 }}
                       onClick={() => setFormData({ ...formData, skinType: typeValue })}
-                      className={`p-4 rounded-2xl border-2 flex items-center gap-4 transition-all ${isSelected
-                        ? 'bg-[#9333EA] border-[#9333EA] text-white shadow-lg'
+                      className={`p-3 rounded-xl border-2 flex items-center gap-3 transition-all ${isSelected
+                        ? 'bg-[#9333EA] border-[#9333EA] text-white shadow-md'
                         : 'bg-white border-gray-200 hover:border-[#9333EA]/50'
                         }`}
                     >
-                      <div className={`p-2 rounded-full ${isSelected ? 'bg-white/20' : 'bg-[#9333EA]/10'}`}>
-                        <Icon className={`w-6 h-6 ${isSelected ? 'text-white' : 'text-[#9333EA]'}`} />
+                      <div className={`p-1.5 rounded-full ${isSelected ? 'bg-white/20' : 'bg-[#9333EA]/10'}`}>
+                        <Icon className={`w-5 h-5 ${isSelected ? 'text-white' : 'text-[#9333EA]'}`} />
                       </div>
-                      <span className="font-medium text-lg">{getSkinTypeLabel(typeValue)}</span>
+                      <span className="font-medium text-sm">{getSkinTypeLabel(typeValue)}</span>
                       {isSelected && (
-                        <div className="ml-auto bg-white rounded-full p-1">
-                          <div className="w-3 h-3 bg-[#9333EA] rounded-full" />
+                        <div className="ml-auto bg-white rounded-full p-0.5">
+                          <div className="w-2 h-2 bg-[#9333EA] rounded-full" />
                         </div>
                       )}
                     </motion.button>
@@ -385,15 +385,15 @@ interface SelectionStepProps {
 function SelectionStep({ title, subtitle, items, selected, onToggle, color, getIcon }: SelectionStepProps) {
   return (
     <motion.div
-      className="space-y-5"
+      className="space-y-3"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
     >
       <div>
-        <h2 className="text-2xl font-bold">{title}</h2>
+        <h2 className="text-xl font-bold">{title}</h2>
         <p className="text-sm text-muted-foreground">{subtitle}</p>
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2">
         {items.map((item, index) => {
           const Icon = getIcon(item);
           const isSelected = selected.includes(item);
@@ -402,9 +402,9 @@ function SelectionStep({ title, subtitle, items, selected, onToggle, color, getI
               key={item}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: index * 0.03 }}
+              transition={{ delay: index * 0.02 }}
               onClick={() => onToggle(item)}
-              className="relative p-4 rounded-2xl border-2 transition-all h-28 flex flex-col items-center justify-center gap-2"
+              className="relative p-2.5 rounded-xl border-2 transition-all h-16 flex flex-col items-center justify-center gap-1"
               style={{
                 backgroundColor: isSelected ? color : 'white',
                 borderColor: isSelected ? color : '#e5e7eb',
@@ -412,15 +412,15 @@ function SelectionStep({ title, subtitle, items, selected, onToggle, color, getI
               }}
             >
               <Icon
-                className="w-7 h-7"
+                className="w-5 h-5"
                 style={{ color: isSelected ? 'white' : color }}
               />
-              <span className="text-xs font-medium text-center leading-tight">{item}</span>
+              <span className="text-[10px] font-medium text-center leading-tight">{item}</span>
               {isSelected && (
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className="absolute top-2 right-2 w-2 h-2 bg-white rounded-full"
+                  className="absolute top-1 right-1 w-1.5 h-1.5 bg-white rounded-full"
                 />
               )}
             </motion.button>

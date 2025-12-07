@@ -140,14 +140,14 @@ export function ProfileScreen({ onNavigate, onLogout }: ProfileScreenProps) {
               <div className="flex items-center gap-2">
                 <Globe className="w-4 h-4 text-[#22C55E]" />
                 <div>
-                  <p className="text-xs text-muted-foreground">{t.registration.step6.labels.country}</p>
+                  <p className="text-xs text-muted-foreground">{t.settings.profile.country}</p>
                   <p className="text-sm">{userProfile.country}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 <Languages className="w-4 h-4 text-[#22C55E]" />
                 <div>
-                  <p className="text-xs text-muted-foreground">{t.registration.step6.labels.language}</p>
+                  <p className="text-xs text-muted-foreground">{t.settings.profile.language}</p>
                   <p className="text-sm">{userProfile.language}</p>
                 </div>
               </div>

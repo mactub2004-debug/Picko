@@ -106,7 +106,7 @@ function calculateCompatibility(
         if (skinConcerns.includes('Acne') && (ingredient.comedogenicRating ?? 0) >= 3) {
             result.isSkinCompatible = false;
             result.warningLevel = 'caution';
-            result.warningMessage = `⚠️ Comedogénico nivel ${ingredient.comedogenicRating}/5`;
+            result.warningMessage = `⚠️ Puede tapar los poros`;
             return result;
         }
 

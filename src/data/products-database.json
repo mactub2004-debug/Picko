@@ -5,7 +5,7 @@
             "name": "Coca-Cola Original 600ml",
             "brand": "Coca-Cola",
             "category": "Bebidas",
-            "image": "https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400",
+            "image": "https://images.unsplash.com/photo-1635774855317-edf3ee4463db?w=400",
             "ingredients": [
                 "Agua carbonatada",
                 "Azúcar",
@@ -31,7 +31,7 @@
             "name": "Doritos Nacho Cheese 150g",
             "brand": "Doritos",
             "category": "Snacks",
-            "image": "https://images.unsplash.com/photo-1613919113640-25732ec5e61f?w=400",
+            "image": "https://images.unsplash.com/photo-1600952841320-db92ec4047ca?w=400",
             "ingredients": [
                 "Maíz",
                 "Aceite vegetal",
@@ -41,7 +41,7 @@
                 "Colorantes artificiales"
             ],
             "allergens": [
-                "Leche"
+                "Lácteos"
             ],
             "nutrition": {
                 "servingSize": "100g",
@@ -66,7 +66,7 @@
                 "Vitamina D"
             ],
             "allergens": [
-                "Leche"
+                "Lácteos"
             ],
             "nutrition": {
                 "servingSize": "100ml",
@@ -84,7 +84,7 @@
             "name": "Pepsi 600ml",
             "brand": "Pepsi",
             "category": "Bebidas",
-            "image": "https://images.unsplash.com/photo-1629203851122-3726ecdf080e?w=400",
+            "image": "https://images.unsplash.com/photo-1581006852262-e4307cf6283a?w=400",
             "ingredients": [
                 "Agua carbonatada",
                 "Jarabe de maíz de alta fructosa",
@@ -110,15 +110,16 @@
             "name": "Galletas Oreo 154g",
             "brand": "Oreo",
             "category": "Snacks",
-            "image": "https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?w=400",
+            "image": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400",
             "ingredients": [
                 "Harina de trigo",
                 "Azúcar",
                 "Aceite vegetal",
-                "Cacao",
+                "Cacao en polvo",
                 "Jarabe de maíz",
                 "Lecitina de soja",
-                "Bicarbonato de sodio"
+                "Bicarbonato de sodio",
+                "Sal"
             ],
             "allergens": [
                 "Gluten",
@@ -140,15 +141,16 @@
             "name": "Yogurt Danone Natural 1kg",
             "brand": "Danone",
             "category": "Lácteos",
-            "image": "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400",
+            "image": "https://images.unsplash.com/photo-1571212515416-fef01fc43637?w=400",
             "ingredients": [
                 "Leche pasteurizada",
-                "Cultivos lácticos",
+                "Cultivos lácticos activos",
                 "Azúcar",
-                "Vitaminas A y D"
+                "Vitamina A",
+                "Vitamina D"
             ],
             "allergens": [
-                "Leche"
+                "Lácteos"
             ],
             "nutrition": {
                 "servingSize": "100g",
@@ -166,15 +168,19 @@
             "name": "Corn Flakes Kellogg's 500g",
             "brand": "Kellogg's",
             "category": "Cereales",
-            "image": "https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=400",
+            "image": "https://images.unsplash.com/photo-1517456793572-1d8efd6dc135?w=400",
             "ingredients": [
                 "Maíz",
                 "Azúcar",
                 "Sal",
-                "Extracto de malta",
-                "Vitaminas y minerales"
+                "Extracto de malta de cebada",
+                "Vitaminas (B1, B2, B3, B6, B12)",
+                "Hierro",
+                "Zinc"
             ],
-            "allergens": [],
+            "allergens": [
+                "Gluten"
+            ],
             "nutrition": {
                 "servingSize": "100g",
                 "calories": 357,
@@ -191,7 +197,7 @@
             "name": "Atún Dolores en Agua 140g",
             "brand": "Dolores",
             "category": "Conservas",
-            "image": "https://images.unsplash.com/photo-1580476262798-bddd9f4b7369?w=400",
+            "image": "https://images.unsplash.com/photo-1574484284002-952d92456975?w=400",
             "ingredients": [
                 "Atún",
                 "Agua",
@@ -216,7 +222,7 @@
             "name": "Agua Ciel 1L",
             "brand": "Ciel",
             "category": "Bebidas",
-            "image": "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400",
+            "image": "https://images.unsplash.com/photo-1560023907-5f339617ea30?w=400",
             "ingredients": [
                 "Agua purificada",
                 "Minerales añadidos"
@@ -238,18 +244,19 @@
             "name": "Cheetos Flamin' Hot 150g",
             "brand": "Cheetos",
             "category": "Snacks",
-            "image": "https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=400",
+            "image": "https://images.unsplash.com/photo-1599490659213-e2b9527bd087?w=400",
             "ingredients": [
                 "Maíz",
                 "Aceite vegetal",
-                "Queso",
+                "Queso en polvo",
                 "Sal",
-                "Especias",
+                "Especias picantes",
                 "Glutamato monosódico",
-                "Colorante rojo 40"
+                "Colorante rojo 40",
+                "Maltodextrina"
             ],
             "allergens": [
-                "Leche"
+                "Lácteos"
             ],
             "nutrition": {
                 "servingSize": "100g",
@@ -270,14 +277,16 @@
             "image": "https://images.unsplash.com/photo-1526318896980-cf78c088247c?w=400",
             "ingredients": [
                 "Avena integral",
-                "Azúcar",
+                "Azúcar morena",
                 "Aceite de canola",
-                "Miel",
+                "Miel de abeja",
                 "Almendras",
-                "Sal"
+                "Sal",
+                "Extracto de vainilla"
             ],
             "allergens": [
-                "Frutos secos"
+                "Frutos secos",
+                "Gluten"
             ],
             "nutrition": {
                 "servingSize": "100g",
@@ -295,7 +304,7 @@
             "name": "Frijoles Negros La Costeña 560g",
             "brand": "La Costeña",
             "category": "Conservas",
-            "image": "https://images.unsplash.com/photo-1589927986089-35812388d1f8?w=400",
+            "image": "https://images.unsplash.com/photo-1551462147-ff29053bfc14?w=400",
             "ingredients": [
                 "Frijoles negros",
                 "Agua",
@@ -319,14 +328,14 @@
             "name": "Leche Armonía Entera Larga Vida 2%",
             "brand": "Armonía",
             "category": "Lácteos",
-            "image": "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=400",
+            "image": "https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400",
             "ingredients": [
                 "Leche entera parcialmente descremada",
                 "Vitamina A",
                 "Vitamina D"
             ],
             "allergens": [
-                "Leche"
+                "Lácteos"
             ],
             "nutrition": {
                 "servingSize": "100ml",

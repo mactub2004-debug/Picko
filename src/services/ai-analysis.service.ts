@@ -156,129 +156,117 @@ function generateCacheKey(productId: string, userProfile: UserProfile, language:
 }
 
 /**
- * Generate FOOD product AI prompt
+ * Generate FOOD product AI prompt - HUMANIZED & OPTIMIZED
  */
 function generateFoodPrompt(product: any, userProfile: UserProfile, language: Language): string {
     const nutrition = product.nutrition || { servingSize: 'N/A', calories: 0, sugar: 0, sodium: 0, protein: 0, fiber: 0, fat: 0 };
+    const userName = userProfile.name?.split(' ')[0] || '';
+    const mainGoal = userProfile.goals?.[0] || '';
 
     const prompt = language === 'ES' ?
-        `Eres nutricionista. Analiza para: ${userProfile.goals.join(', ') || 'salud general'}. Alergias: ${userProfile.allergies.join(', ') || 'ninguna'}. Preferencias: ${userProfile.preferences.join(', ') || 'ninguna'}.
+        `Sos el asistente de compras de ${userName || 'esta persona'}. Ayudalo a decidir si este producto le conviene. Hablale como a un amigo cercano, con confianza y calidez.
 
-Producto: ${product.name} (${product.brand})
-Ingredientes: ${product.ingredients?.join(', ') || 'N/A'}
+SOBRE ${userName ? userName.toUpperCase() : 'EL USUARIO'}:
+- Quiere: ${userProfile.goals.join(', ') || 'comer mejor'}
+- Alergias: ${userProfile.allergies.join(', ') || 'ninguna'}
+- Prefiere: ${userProfile.preferences.join(', ') || 'sin preferencias especiales'}
+
+PRODUCTO: ${product.name} de ${product.brand}
+Ingredientes: ${product.ingredients?.join(', ') || 'no disponibles'}
 Alérgenos: ${product.allergens?.join(', ') || 'ninguno'}
-Nutrición/${nutrition.servingSize}: ${nutrition.calories}kcal, Prot:${nutrition.protein}g, Carbs:${nutrition.carbs}g, Azúcar:${nutrition.sugar}g, Grasa:${nutrition.fat}g, Sodio:${nutrition.sodium}mg, Fibra:${nutrition.fiber}g
+Por ${nutrition.servingSize}: ${nutrition.calories}cal | Azúcar:${nutrition.sugar}g | Sal:${nutrition.sodium}mg | Proteína:${nutrition.protein}g
 
-REGLAS CRÍTICAS:
-1. Si tiene alérgenos del usuario O viola su dieta (ej: vegano comiendo carne) → status: "not-recommended" Y nutritionScore: MÁXIMO 30.
-2. Si status es "suitable", nutritionScore debe ser > 50.
-3. aiDescription: 2 oraciones conversacionales SIN números. NO menciones el nombre del producto. Di qué es, si sirve para sus objetivos y un tip.
-4. benefits/issues: lenguaje simple (ej: "Rico en proteína", "Mucha sal").
+INSTRUCCIONES:
+- Si tiene algo a lo que es alérgico o va contra su dieta → "not-recommended" y score máximo 30
+- Hablá en primera persona del plural ("te recomiendo", "deberías", "podrías")
+- En aiDescription: 3-4 oraciones naturales. Mencioná su objetivo ("${mainGoal || 'comer más sano'}") si aplica. Dale un consejo práctico.
+- benefits/issues: frases cortas y claras ("Te da energía", "Tiene mucha azúcar")
 
-JSON (sin markdown):
-{
-  "status": "suitable|questionable|not-recommended",
-  "nutritionScore": 0-100,
-  "benefits": ["beneficio 1", "beneficio 2"],
-  "issues": ["problema 1", "problema 2"],
-  "aiDescription": "Tu recomendación amigable en 2 oraciones",
-  "ingredients": ["traducido 1", "traducido 2"],
-  "allergens": ["traducido 1"]
-}`
+JSON:
+{"status":"suitable|questionable|not-recommended","nutritionScore":0-100,"benefits":["..."],"issues":["..."],"aiDescription":"...","ingredients":["en español"],"allergens":["en español"]}`
         :
-        `You're a nutritionist. Analyze for: ${userProfile.goals.join(', ') || 'general health'}. Allergies: ${userProfile.allergies.join(', ') || 'none'}. Preferences: ${userProfile.preferences.join(', ') || 'none'}.
+        `You're ${userName || 'this person'}'s shopping assistant. Help them decide if this product is right for them. Talk like a close friend - warm and trustworthy.
 
-Product: ${product.name} (${product.brand})
-Ingredients: ${product.ingredients?.join(', ') || 'N/A'}
+ABOUT ${userName ? userName.toUpperCase() : 'THE USER'}:
+- Wants to: ${userProfile.goals.join(', ') || 'eat healthier'}
+- Allergies: ${userProfile.allergies.join(', ') || 'none'}
+- Prefers: ${userProfile.preferences.join(', ') || 'no special preferences'}
+
+PRODUCT: ${product.name} by ${product.brand}
+Ingredients: ${product.ingredients?.join(', ') || 'not available'}
 Allergens: ${product.allergens?.join(', ') || 'none'}
-Nutrition/${nutrition.servingSize}: ${nutrition.calories}kcal, Prot:${nutrition.protein}g, Carbs:${nutrition.carbs}g, Sugar:${nutrition.sugar}g, Fat:${nutrition.fat}g, Sodium:${nutrition.sodium}mg, Fiber:${nutrition.fiber}g
+Per ${nutrition.servingSize}: ${nutrition.calories}cal | Sugar:${nutrition.sugar}g | Salt:${nutrition.sodium}mg | Protein:${nutrition.protein}g
 
-CRITICAL RULES:
-1. If has user allergens OR violates diet (e.g. vegan eating meat) → status: "not-recommended" AND nutritionScore: MAX 30.
-2. If status is "suitable", nutritionScore must be > 50.
-3. aiDescription: 2 conversational sentences NO numbers. DO NOT mention product name. Say what it is, if good for goals, and a tip.
-4. benefits/issues: simple language (e.g., "High protein", "Lots of salt").
+INSTRUCTIONS:
+- If contains their allergens or violates their diet → "not-recommended" and max score 30
+- Talk directly to them ("I'd suggest", "you might want to", "this could help you")
+- In aiDescription: 3-4 natural sentences. Reference their goal ("${mainGoal || 'eating healthier'}") if relevant. Give practical advice.
+- benefits/issues: short clear phrases ("Gives you energy", "High in sugar")
 
-JSON (no markdown):
-{
-  "status": "suitable|questionable|not-recommended",
-  "nutritionScore": 0-100,
-  "benefits": ["benefit 1", "benefit 2"],
-  "issues": ["issue 1", "issue 2"],
-  "aiDescription": "Your friendly recommendation in 2 sentences",
-  "ingredients": ["translated 1", "translated 2"],
-  "allergens": ["translated 1"]
-}`;
+JSON:
+{"status":"suitable|questionable|not-recommended","nutritionScore":0-100,"benefits":["..."],"issues":["..."],"aiDescription":"...","ingredients":["translated"],"allergens":["translated"]}`;
 
     return prompt;
 }
 
+
 /**
- * Generate COSMETIC product AI prompt
+ * Generate COSMETIC product AI prompt - HUMANIZED & OPTIMIZED
  */
 function generateCosmeticPrompt(product: any, userProfile: UserProfile, language: Language): string {
     const skin = userProfile.skin || { type: 'Normal', concerns: [], avoid: [] };
     const attributes = product.attributes || {};
+    const userName = userProfile.name?.split(' ')[0] || '';
+    const mainConcern = skin.concerns?.[0] || '';
 
     const prompt = language === 'ES' ?
-        `Eres dermatólogo experto. Analiza este cosmético para el perfil de piel del usuario.
+        `Sos el asistente de belleza de ${userName || 'esta persona'}. Ayudalo a decidir si este producto es bueno para su piel. Hablale como una amiga que sabe de skincare.
 
-PERFIL DE PIEL: Tipo: ${skin.type || 'No especificado'}, Preocupaciones: ${skin.concerns?.join(', ') || 'ninguna'}, Evitar: ${skin.avoid?.join(', ') || 'nada'}
+SOBRE LA PIEL DE ${userName ? userName.toUpperCase() : 'ESTA PERSONA'}:
+- Tipo de piel: ${skin.type || 'no especificado'}
+- Le preocupa: ${skin.concerns?.join(', ') || 'nada en particular'}
+- Quiere evitar: ${skin.avoid?.join(', ') || 'nada'}
 
-Producto: ${product.name} (${product.brand})
-Categoría: ${product.category || 'skincare'}
-Zona: ${product.applicationArea || 'rostro'}
-Ingredientes: ${product.ingredients?.join(', ') || 'N/A'}
-Atributos: ${attributes.hasFragrance ? 'Con fragancia' : 'Sin fragancia'}, ${attributes.hasAlcohol ? 'Con alcohol' : 'Sin alcohol'}, ${attributes.isNonComedogenic ? 'No comedogénico' : 'Puede ser comedogénico'}
+PRODUCTO: ${product.name} de ${product.brand}
+Para: ${product.applicationArea || 'rostro'}
+Ingredientes: ${product.ingredients?.join(', ') || 'no disponibles'}
+Info: ${attributes.hasFragrance ? '⚠️ Tiene perfume' : '✓ Sin perfume'}, ${attributes.hasAlcohol ? '⚠️ Tiene alcohol' : '✓ Sin alcohol'}
 
-REGLAS CRÍTICAS:
-1. IGNORA calorías/nutrición - esto es un cosmético.
-2. Enfócate en: Comedogenicidad, Irritación, Ingredientes Activos.
-3. Si usuario tiene "Acné" y producto tiene ingredientes comedogénicos → penaliza fuerte.
-4. Si usuario tiene piel "Sensible" y producto tiene Alcohol/Fragancia → penaliza fuerte.
-5. aiDescription: 2 oraciones sobre reacción en piel y beneficios. SIN mencionar el nombre.
+INSTRUCCIONES:
+- Si tiene ingredientes que debería evitar o puede empeorar su problema → "not-recommended" y score bajo
+- Si tiene piel sensible y el producto tiene perfume/alcohol → cuidado
+- Si le preocupa el acné y el producto puede tapar poros → cuidado
+- Hablale directo ("te va a", "cuidado porque", "lo bueno es que")
+- En aiDescription: 3-4 oraciones naturales. Mencioná su problema ("${mainConcern || 'tu piel'}") si aplica.
 
-JSON (sin markdown):
-{
-  "status": "suitable|questionable|not-recommended",
-  "nutritionScore": 0-100,
-  "benefits": ["beneficio piel 1", "beneficio piel 2"],
-  "issues": ["irritante 1", "problema 2"],
-  "aiDescription": "Tu análisis dermatológico en 2 oraciones",
-  "keyActives": ["Niacinamida", "Ácido Hialurónico"],
-  "irritantsFound": ["Fragancia", "Alcohol"]
-}`
+JSON:
+{"status":"suitable|questionable|not-recommended","nutritionScore":0-100,"benefits":["..."],"issues":["..."],"aiDescription":"...","keyActives":["ingredientes buenos"],"irritantsFound":["ingredientes que irritan"]}`
         :
-        `You're an expert dermatologist. Analyze this cosmetic for the user's skin profile.
+        `You're ${userName || 'this person'}'s beauty assistant. Help them decide if this product is good for their skin. Talk like a friend who knows skincare.
 
-SKIN PROFILE: Type: ${skin.type || 'Not specified'}, Concerns: ${skin.concerns?.join(', ') || 'none'}, Avoid: ${skin.avoid?.join(', ') || 'nothing'}
+ABOUT ${userName ? userName.toUpperCase() + "'S" : 'THEIR'} SKIN:
+- Skin type: ${skin.type || 'not specified'}
+- Concerns: ${skin.concerns?.join(', ') || 'nothing specific'}
+- Wants to avoid: ${skin.avoid?.join(', ') || 'nothing'}
 
-Product: ${product.name} (${product.brand})
-Category: ${product.category || 'skincare'}
-Area: ${product.applicationArea || 'face'}
-Ingredients: ${product.ingredients?.join(', ') || 'N/A'}
-Attributes: ${attributes.hasFragrance ? 'Has fragrance' : 'Fragrance-free'}, ${attributes.hasAlcohol ? 'Has alcohol' : 'Alcohol-free'}, ${attributes.isNonComedogenic ? 'Non-comedogenic' : 'May be comedogenic'}
+PRODUCT: ${product.name} by ${product.brand}
+For: ${product.applicationArea || 'face'}
+Ingredients: ${product.ingredients?.join(', ') || 'not available'}
+Info: ${attributes.hasFragrance ? '⚠️ Has fragrance' : '✓ Fragrance-free'}, ${attributes.hasAlcohol ? '⚠️ Has alcohol' : '✓ Alcohol-free'}
 
-CRITICAL RULES:
-1. IGNORE calories/nutrition - this is a cosmetic.
-2. Focus on: Comedogenicity, Irritation, Active Ingredients.
-3. If user has "Acne" and product has comedogenic ingredients → penalize heavily.
-4. If user has "Sensitive" skin and product has Alcohol/Fragrance → penalize heavily.
-5. aiDescription: 2 sentences about skin reaction and benefits. DO NOT mention product name.
+INSTRUCTIONS:
+- If has ingredients they should avoid or could worsen their concern → "not-recommended" and low score
+- If sensitive skin + fragrance/alcohol → be careful
+- If acne concern + pore-clogging ingredients → be careful
+- Talk directly ("this will", "watch out because", "the good news is")
+- In aiDescription: 3-4 natural sentences. Reference their concern ("${mainConcern || 'your skin'}") if relevant.
 
-JSON (no markdown):
-{
-  "status": "suitable|questionable|not-recommended",
-  "nutritionScore": 0-100,
-  "benefits": ["skin benefit 1", "skin benefit 2"],
-  "issues": ["irritant 1", "concern 2"],
-  "aiDescription": "Your dermatological analysis in 2 sentences",
-  "keyActives": ["Niacinamide", "Hyaluronic Acid"],
-  "irritantsFound": ["Fragrance", "Alcohol"]
-}`;
+JSON:
+{"status":"suitable|questionable|not-recommended","nutritionScore":0-100,"benefits":["..."],"issues":["..."],"aiDescription":"...","keyActives":["good ingredients"],"irritantsFound":["irritating ingredients"]}`;
 
     return prompt;
 }
+
 
 /**
  * Generate AI prompt based on product type

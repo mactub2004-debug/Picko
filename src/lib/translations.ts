@@ -419,7 +419,7 @@ export const translations = {
             attributes: {
                 crueltyFree: 'Libre de crueldad',
                 vegan: 'Vegano',
-                nonComedogenic: 'No comedogénico',
+                nonComedogenic: 'No tapa los poros',
                 fragranceFree: 'Sin fragancia',
                 alcoholFree: 'Sin alcohol',
                 hypoallergenic: 'Hipoalergénico',
@@ -921,7 +921,7 @@ export const translations = {
             attributes: {
                 crueltyFree: 'Cruelty Free',
                 vegan: 'Vegan',
-                nonComedogenic: 'Non-Comedogenic',
+                nonComedogenic: 'Won\'t clog pores',
                 fragranceFree: 'Fragrance Free',
                 alcoholFree: 'Alcohol Free',
                 hypoallergenic: 'Hypoallergenic',

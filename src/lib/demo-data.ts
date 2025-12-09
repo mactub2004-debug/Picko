@@ -64,7 +64,7 @@ export const demoFoodProducts: FoodProduct[] = [
     name: 'Protein Energy Bar',
     brand: 'FitLife',
     barcode: '9876543210987',
-    image: 'https://images.unsplash.com/photo-1604480133435-4b5f9804c899?w=400&h=400&fit=crop',
+    image: 'https://images.unsplash.com/photo-1622484212850-eb596d769edc?w=400&h=400&fit=crop',
     type: 'FOOD',
     category: 'Snacks',
     ingredients: ['Peanuts', 'Whey Protein', 'Sugar', 'Palm Oil', 'Soy Lecithin'],
@@ -112,7 +112,7 @@ export const demoFoodProducts: FoodProduct[] = [
     name: 'Greek Yogurt',
     brand: 'Dairy Fresh',
     barcode: '7362819045678',
-    image: 'https://images.unsplash.com/photo-1571212515674-3fdb992e2c08?w=400&h=400&fit=crop',
+    image: 'https://images.unsplash.com/photo-1571230389215-b34a89739ef1?w=400&h=400&fit=crop',
     type: 'FOOD',
     category: 'Dairy',
     ingredients: ['Milk', 'Live Active Cultures'],
@@ -549,7 +549,7 @@ export const ingredientsToAvoid = [
   { value: 'Silicones', label: 'Silicones', risk: 'Pore clogging for some' },
   { value: 'Essential Oils', label: 'Essential Oils', risk: 'Sensitization' },
   { value: 'Retinoids', label: 'Retinoids (if pregnant)', risk: 'Not pregnancy-safe' },
-  { value: 'Mineral Oil', label: 'Mineral Oil', risk: 'Comedogenic for some' }
+  { value: 'Mineral Oil', label: 'Mineral Oil', risk: 'Can clog pores' }
 ];
 
 // ============================================

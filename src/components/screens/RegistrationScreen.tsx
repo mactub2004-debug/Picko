@@ -161,8 +161,8 @@ export function RegistrationScreen({ onComplete }: RegistrationScreenProps) {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-hidden">
-        <div className="max-w-md mx-auto px-6 py-4">
+      <div className="flex-1 overflow-hidden flex flex-col">
+        <div className="max-w-md mx-auto px-6 py-4 flex-1 flex flex-col w-full">
 
           {/* STEP 1: BASIC INFO */}
           {step === 1 && (
@@ -383,17 +383,23 @@ interface SelectionStepProps {
 }
 
 function SelectionStep({ title, subtitle, items, selected, onToggle, color, getIcon }: SelectionStepProps) {
+  // Calculate rows needed (2 columns, so items/2 rounded up)
+  const rows = Math.ceil(items.length / 2);
+
   return (
     <motion.div
-      className="space-y-3"
+      className="flex-1 flex flex-col gap-3"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
     >
-      <div>
+      <div className="flex-shrink-0">
         <h2 className="text-xl font-bold">{title}</h2>
         <p className="text-sm text-muted-foreground">{subtitle}</p>
       </div>
-      <div className="grid grid-cols-2 gap-2">
+      <div
+        className="flex-1 grid grid-cols-2 gap-2"
+        style={{ gridTemplateRows: `repeat(${rows}, 1fr)` }}
+      >
         {items.map((item, index) => {
           const Icon = getIcon(item);
           const isSelected = selected.includes(item);
@@ -404,7 +410,7 @@ function SelectionStep({ title, subtitle, items, selected, onToggle, color, getI
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: index * 0.02 }}
               onClick={() => onToggle(item)}
-              className="relative p-2.5 rounded-xl border-2 transition-all h-16 flex flex-col items-center justify-center gap-1"
+              className="relative p-2 rounded-xl border-2 transition-all flex flex-col items-center justify-center gap-2 min-h-[60px]"
               style={{
                 backgroundColor: isSelected ? color : 'white',
                 borderColor: isSelected ? color : '#e5e7eb',
@@ -412,10 +418,10 @@ function SelectionStep({ title, subtitle, items, selected, onToggle, color, getI
               }}
             >
               <Icon
-                className="w-5 h-5"
+                className="w-7 h-7"
                 style={{ color: isSelected ? 'white' : color }}
               />
-              <span className="text-[10px] font-medium text-center leading-tight">{item}</span>
+              <span className="text-xs font-medium text-center leading-tight">{item}</span>
               {isSelected && (
                 <motion.div
                   initial={{ scale: 0 }}

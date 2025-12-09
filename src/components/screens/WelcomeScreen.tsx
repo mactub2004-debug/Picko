@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { Language } from '../../lib/translations';
+import pickoLogo from '../../assets/picko-logo.png';
 
 interface WelcomeScreenProps {
     onGetStarted: () => void;
@@ -74,7 +75,7 @@ export function WelcomeScreen({ onGetStarted, onSignIn }: WelcomeScreenProps) {
                     {/* Picko Logo - Slightly smaller for better balance */}
                     <div className="w-28 h-28 mb-5 flex items-center justify-center">
                         <img
-                            src="/src/assets/picko-logo.png"
+                            src={pickoLogo}
                             alt="Picko Logo"
                             className="w-full h-full object-contain drop-shadow-lg"
                         />
